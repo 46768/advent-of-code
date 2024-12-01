@@ -23,9 +23,9 @@ public class main {
 		return res;
 	}
 
-	static ArrayList<ArrayList<Integer>> getData() {
+	static ArrayList<ArrayList<Integer>> getData(String path) {
 		try {
-			File data = new File("data.txt");
+			File data = new File(path);
 			Scanner dataScan = new Scanner(data);
 			ArrayList<String> dataArray = new ArrayList<String>();
 			while (dataScan.hasNextLine()) {
@@ -42,8 +42,8 @@ public class main {
 		}
 	}
 
-	static void part1() {
-		ArrayList<ArrayList<Integer>> data = getData();
+	static void part1(String path) {
+		ArrayList<ArrayList<Integer>> data = getData(path);
 		int sum = 0;
 		Collections.sort(data.get(0));
 		Collections.sort(data.get(1));
@@ -55,8 +55,8 @@ public class main {
 		System.out.println(String.format("Part 1: %d", sum));
 	}
 
-	static void part2() {
-		ArrayList<ArrayList<Integer>> data = getData();
+	static void part2(String path) {
+		ArrayList<ArrayList<Integer>> data = getData(path);
 		ArrayList<Integer> dataLeft = data.get(0);
 		ArrayList<Integer> dataRight = data.get(1);
 		HashMap<Integer, Integer> leftMap = new HashMap<Integer, Integer>();
@@ -89,7 +89,11 @@ public class main {
 	}
 
 	public static void main(String[] arg) {
-		part1();
-		part2();
+		if (arg.length < 1) {
+			System.out.println("No Input data given");
+			return;
+		}
+		part1(arg[0]);
+		part2(arg[0]);
 	}
 }
