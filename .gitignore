@@ -2,4 +2,4 @@
 *.class
 
 #AOC data input
-data.txt
+*.txt
