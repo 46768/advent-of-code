@@ -1,12 +1,12 @@
+package fileReader;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-package fileReader;
-
 public class FileReader {
-	public static String[] readData(String path) {
+	public static ArrayList<String> readData(String path) {
 		try {
 			File data = new File(path);
 			Scanner dataScan = new Scanner(data);
@@ -18,9 +18,9 @@ public class FileReader {
 			dataScan.close();
 			return dataArray;
 		} catch (FileNotFoundException e) {
-			System.out.println(String.format());
+			System.out.println(String.format("%s: File not found", path));
 			e.printStackTrace();
-			return new ArrayList<ArrayList<Integer>>();
+			return new ArrayList<String>();
 		}
 	}
 }

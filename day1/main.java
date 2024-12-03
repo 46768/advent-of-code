@@ -1,17 +1,15 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import fileReader.FileReader;
 
+class Data extends ArrayList<ArrayList<Integer>> {};
 public class main {
 	// Takes in array of lines of data file
 	// Output an array containing 2 arrays for left and right data
-	static ArrayList<ArrayList<Integer>> formatData(ArrayList<String> dat) {
-		ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+	static Data formatData(ArrayList<String> dat) {
+		Data res = new Data();
 		res.add(new ArrayList<Integer>());
 		res.add(new ArrayList<Integer>());
 		for (int idx = 0; idx < dat.size(); idx++) {
@@ -25,23 +23,9 @@ public class main {
 		return res;
 	}
 
-	static ArrayList<ArrayList<Integer>> getData(String path) {
-		try {
-			File data = new File(path);
-			Scanner dataScan = new Scanner(data);
-			ArrayList<String> dataArray = new ArrayList<String>();
-			while (dataScan.hasNextLine()) {
-				String line = dataScan.nextLine();
-				dataArray.add(line);
-			}
-			dataScan.close();
-			ArrayList<ArrayList<Integer>> dataFormatted = formatData(dataArray);
-			return dataFormatted;
-		} catch (FileNotFoundException e) {
-			System.out.println("data.txt not found");
-			e.printStackTrace();
-			return new ArrayList<ArrayList<Integer>>();
-		}
+	static Data getData(String path) {
+		Data dataFormatted = formatData(FileReader.readData(path));
+		return dataFormatted;
 	}
 
 	static void part1(String path) {

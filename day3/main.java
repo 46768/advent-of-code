@@ -1,27 +1,11 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import fileReader.FileReader;
 
 public class main {
 	static ArrayList<String> getData(String path) {
-		try {
-			File data = new File(path);
-			Scanner dataScan = new Scanner(data);
-			ArrayList<String> dataArray = new ArrayList<String>();
-			while (dataScan.hasNextLine()) {
-				String line = dataScan.nextLine();
-				dataArray.add(line);
-			}
-			dataScan.close();
-			return dataArray;
-		} catch (FileNotFoundException e) {
-			System.out.println("data.txt not found");
-			e.printStackTrace();
-			return new ArrayList<String>();
-		}
+			return FileReader.readData(path);
 	}
 
 	static void part1(String path) {

@@ -1,11 +1,12 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.util.ArrayList;
+import fileReader.FileReader;
+
+// Datatype for input data
+class Data extends ArrayList<ArrayList<Integer>> {}
 
 public class main {
-	static ArrayList<ArrayList<Integer>> formatData(ArrayList<String> dat) {
-		ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+	static Data formatData(ArrayList<String> dat) {
+		Data res = new Data();
 		for (String line : dat) {
 			ArrayList<Integer> report = new ArrayList<Integer>();
 			String[] dataSplit = line.split(" ");
@@ -17,22 +18,8 @@ public class main {
 		return res;
 	}
 
-	static ArrayList<ArrayList<Integer>> getData(String path) {
-		try {
-			File data = new File(path);
-			Scanner dataScan = new Scanner(data);
-			ArrayList<String> dataArray = new ArrayList<String>();
-			while (dataScan.hasNextLine()) {
-				String line = dataScan.nextLine();
-				dataArray.add(line);
-			}
-			dataScan.close();
-			return formatData(dataArray);
-		} catch (FileNotFoundException e) {
-			System.out.println("data.txt not found");
-			e.printStackTrace();
-			return new ArrayList<ArrayList<Integer>>();
-		}
+	static Data getData(String path) {
+			return formatData(FileReader.readData(path));
 	}
 
 	static boolean checkSafety(int level1, int level2, boolean isIncrease) {
