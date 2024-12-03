@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import fileReader.FileReader;
+
 public class main {
 	// Takes in array of lines of data file
 	// Output an array containing 2 arrays for left and right data
