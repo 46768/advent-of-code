@@ -88,7 +88,6 @@ public class main {
 			}
 		}
 
-		System.out.println(saveableReport);
 		for (ArrayList<Integer> report : saveableReport) {
 			if (checkReport(report) >= 0) {
 				for (int i = 0; i < report.size(); i++) {
@@ -96,10 +95,6 @@ public class main {
 			ArrayList<Integer> reportClone = (ArrayList<Integer>)report.clone();
 			reportClone.remove(i);
 			if (checkReport(reportClone) == -1) {
-				System.out.println(report);
-				System.out.println(reportClone);
-				System.out.println("!");
-				System.out.println("-----------");
 				safeCount++;
 				break;
 			}
