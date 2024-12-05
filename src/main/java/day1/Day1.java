@@ -1,15 +1,16 @@
+package day1;
+
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import fileReader.FileReader;
 
-class Data extends ArrayList<ArrayList<Integer>> {};
-public class main {
+public class Day1 {
 	// Takes in array of lines of data file
 	// Output an array containing 2 arrays for left and right data
-	static Data formatData(ArrayList<String> dat) {
-		Data res = new Data();
+	private static ArrayList<ArrayList<Integer>> formatData(ArrayList<String> dat) {
+		ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
 		res.add(new ArrayList<Integer>());
 		res.add(new ArrayList<Integer>());
 		for (int idx = 0; idx < dat.size(); idx++) {
@@ -23,12 +24,12 @@ public class main {
 		return res;
 	}
 
-	static Data getData(String path) {
-		Data dataFormatted = formatData(FileReader.readData(path));
+	private static ArrayList<ArrayList<Integer>> getData(String path) {
+		ArrayList<ArrayList<Integer>> dataFormatted = formatData(FileReader.readData(path));
 		return dataFormatted;
 	}
 
-	static void part1(String path) {
+	public static void part1(String path) {
 		ArrayList<ArrayList<Integer>> data = getData(path);
 		int sum = 0;
 		Collections.sort(data.get(0));
@@ -41,7 +42,7 @@ public class main {
 		System.out.println(String.format("Part 1: %d", sum));
 	}
 
-	static void part2(String path) {
+	public static void part2(String path) {
 		ArrayList<ArrayList<Integer>> data = getData(path);
 		ArrayList<Integer> dataLeft = data.get(0);
 		ArrayList<Integer> dataRight = data.get(1);
@@ -74,12 +75,11 @@ public class main {
 		System.out.println(String.format("Part 2: %d", sum));
 	}
 
-	public static void main(String[] arg) {
-		if (arg.length < 1) {
-			System.out.println("No Input data given");
-			return;
-		}
-		part1(arg[0]);
-		part2(arg[0]);
+	public static void runDay() {
+		String dataPath = "data/day1.txt";
+		System.out.println("Day 1 Run: ");
+		part1(dataPath);
+		part2(dataPath);
+		System.out.println("-----------------");
 	}
 }

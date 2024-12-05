@@ -1,5 +1,12 @@
 # Java compiled
 *.class
+target/
 
-#AOC data input
+# AOC Puzzle input
+data/
 *.txt
+
+# JDTLS
+.settings/
+.classpath
+.project

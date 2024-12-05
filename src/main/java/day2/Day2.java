@@ -1,12 +1,12 @@
+package day2;
+
 import java.util.ArrayList;
+
 import fileReader.FileReader;
 
-// Datatype for input data
-class Data extends ArrayList<ArrayList<Integer>> {}
-
-public class main {
-	static Data formatData(ArrayList<String> dat) {
-		Data res = new Data();
+public class Day2 {
+	private static ArrayList<ArrayList<Integer>> formatData(ArrayList<String> dat) {
+		ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
 		for (String line : dat) {
 			ArrayList<Integer> report = new ArrayList<Integer>();
 			String[] dataSplit = line.split(" ");
@@ -18,11 +18,11 @@ public class main {
 		return res;
 	}
 
-	static Data getData(String path) {
+	private static ArrayList<ArrayList<Integer>> getData(String path) {
 			return formatData(FileReader.readData(path));
 	}
 
-	static boolean checkSafety(int level1, int level2, boolean isIncrease) {
+	private static boolean checkSafety(int level1, int level2, boolean isIncrease) {
 		if ((level1 > level2) != isIncrease) {
 			return false;
 		}
@@ -34,7 +34,7 @@ public class main {
 		return true;
 	}
 
-	static int checkReport(ArrayList<Integer> report) {
+	private static int checkReport(ArrayList<Integer> report) {
 		int dif1 = 0;
 		for (int i = 1; i < report.size(); i++) {
 			//all decreasing / increasing check
@@ -47,7 +47,7 @@ public class main {
 		return -1;
 	}
 
-	static void part1(String path) {
+	public static void part1(String path) {
 		ArrayList<ArrayList<Integer>> data = getData(path);
 
 		int safeCount = 0;
@@ -61,7 +61,7 @@ public class main {
 		System.out.println(String.format("Report Safe Count: %d", safeCount));
 	}
 
-	static void part2(String path) {
+	public static void part2(String path) {
 		ArrayList<ArrayList<Integer>> data = getData(path);
 
 		int safeCount = 0;
@@ -92,12 +92,11 @@ public class main {
 		System.out.println(String.format("Report Safe Count With Problem Dampener: %d", safeCount));
 	}
 
-	public static void main(String[] arg) {
-		if (arg.length < 1) {
-			System.out.println("No Input data given");
-			return;
-		}
-		part1(arg[0]);
-		part2(arg[0]);
+	public static void runDay() {
+		String dataPath = "data/day2.txt";
+		System.out.println("Day 2 Run: ");
+		part1(dataPath);
+		part2(dataPath);
+		System.out.println("-----------------");
 	}
 }
