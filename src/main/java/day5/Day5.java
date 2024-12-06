@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Collections;
+
+import dayBase.DayBase;
 import fileReader.FileReader;
 
-public class Day5 {
+public class Day5 extends DayBase {
 	private static ArrayList<ArrayList<String>> formatData(ArrayList<String> data) {
 		ArrayList<String> pageOrderingRule = new ArrayList<String>();
 		ArrayList<String> pagePrintOrder = new ArrayList<String>();
@@ -82,7 +84,7 @@ public class Day5 {
 		return arr.get((int)(Math.ceil(arr.size()/2)));
 	}
 
-	public static void part1(String path) {
+	public void part1(String path) {
 		ArrayList<ArrayList<String>> data = formatData(FileReader.readData(path));
 		// get hashmap with closer as key and openers as hashset value
 		HashMap<Integer, HashSet<Integer>> printRule = formatRule(data.get(0), true);
@@ -99,7 +101,7 @@ public class Day5 {
 		System.out.println(String.format("Sum of middle page number of valid order: %d", middleSum));
 	}
 
-	public static void part2(String path) {
+	public void part2(String path) {
 		ArrayList<ArrayList<String>> data = formatData(FileReader.readData(path));
 		// get hashmap with closer as key and openers as hashset value
 		HashMap<Integer, HashSet<Integer>> printRule = formatRule(data.get(0), true);
@@ -147,13 +149,5 @@ public class Day5 {
 			};
 		}
 		System.out.println(String.format("Sum Of Middle Of Fixed Order: %d", middleSum));	
-	}
-
-	public static void runDay() {
-		String dataPath = "data/day5.txt";
-		System.out.println("Day 5 Run: ");
-		part1(dataPath);
-		part2(dataPath);
-		System.out.println("-----------------");
 	}
 }

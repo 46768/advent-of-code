@@ -1,9 +1,11 @@
 package day4;
 
 import java.util.ArrayList;
+
+import dayBase.DayBase;
 import fileReader.FileReader;
 
-public class Day4 {
+public class Day4 extends DayBase {
 	private static int[][] searchIterator = {
 	   //x, y
 		{0, 1},
@@ -22,7 +24,7 @@ public class Day4 {
 		return matrix.get(x).charAt(y);
 	}
 
-	public static void part1(String path) {
+	public void part1(String path) {
 		ArrayList<String> data = FileReader.readData(path);
 		int lineCnt = data.size();
 		int strCnt = data.get(0).length();
@@ -54,7 +56,7 @@ public class Day4 {
 		System.out.println(String.format("XMAS Count: %d", count));
 	}
 
-	public static void part2(String path) {
+	public void part2(String path) {
 		ArrayList<String> data = FileReader.readData(path);
 		int lineCnt = data.size();
 		int strCnt = data.get(0).length();
@@ -104,13 +106,5 @@ public class Day4 {
 		}
 
 		System.out.println(String.format("X-MAS Count: %d", count));
-	}
-
-	public static void runDay() {
-		String dataPath = "data/day4.txt";
-		System.out.println("Day 4 Run: ");
-		part1(dataPath);
-		part2(dataPath);
-		System.out.println("-----------------");
 	}
 }

@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import dayBase.DayBase;
 import fileReader.FileReader;
 
-public class Day3 {
+public class Day3 extends DayBase {
 	private static ArrayList<String> getData(String path) {
 			return FileReader.readData(path);
 	}
 
-	public static void part1(String path) {
+	public void part1(String path) {
 		ArrayList<String> data = getData(path);
 		String regex = "mul\\(\\d*,\\d*\\)";
 
@@ -31,7 +32,7 @@ public class Day3 {
 		System.out.println(String.format("Sum Of Mul() FN: %d", sum));
 	}
 
-	public static void part2(String path) {
+	public void part2(String path) {
 		ArrayList<String> data = getData(path);
 		String regex = "(mul\\(\\d*,\\d*\\))|(do\\(\\))|(don't\\(\\))";
 
@@ -56,14 +57,6 @@ public class Day3 {
 			}
 		}
 		System.out.println(String.format("Sum Of Mul() With Enable/Disable: %d", sum));
-	}
-
-	public static void runDay() {
-		String dataPath = "data/day3.txt";
-		System.out.println("Day 3 Run: ");
-		part1(dataPath);
-		part2(dataPath);
-		System.out.println("-----------------");
 	}
 }
 

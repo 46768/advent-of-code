@@ -2,9 +2,10 @@ package day2;
 
 import java.util.ArrayList;
 
+import dayBase.DayBase;
 import fileReader.FileReader;
 
-public class Day2 {
+public class Day2 extends DayBase {
 	private static ArrayList<ArrayList<Integer>> formatData(ArrayList<String> dat) {
 		ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
 		for (String line : dat) {
@@ -22,18 +23,6 @@ public class Day2 {
 			return formatData(FileReader.readData(path));
 	}
 
-	private static boolean checkSafety(int level1, int level2, boolean isIncrease) {
-		if ((level1 > level2) != isIncrease) {
-			return false;
-		}
-		//distance check
-		int distance = Math.abs(level1-level2);
-		if (distance > 3) {
-			return false;
-		}
-		return true;
-	}
-
 	private static int checkReport(ArrayList<Integer> report) {
 		int dif1 = 0;
 		for (int i = 1; i < report.size(); i++) {
@@ -47,7 +36,7 @@ public class Day2 {
 		return -1;
 	}
 
-	public static void part1(String path) {
+	public void part1(String path) {
 		ArrayList<ArrayList<Integer>> data = getData(path);
 
 		int safeCount = 0;
@@ -61,7 +50,7 @@ public class Day2 {
 		System.out.println(String.format("Report Safe Count: %d", safeCount));
 	}
 
-	public static void part2(String path) {
+	public void part2(String path) {
 		ArrayList<ArrayList<Integer>> data = getData(path);
 
 		int safeCount = 0;
@@ -90,13 +79,5 @@ public class Day2 {
 		}
 
 		System.out.println(String.format("Report Safe Count With Problem Dampener: %d", safeCount));
-	}
-
-	public static void runDay() {
-		String dataPath = "data/day2.txt";
-		System.out.println("Day 2 Run: ");
-		part1(dataPath);
-		part2(dataPath);
-		System.out.println("-----------------");
 	}
 }

@@ -3,6 +3,8 @@ package day6;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.HashMap;
+
+import dayBase.DayBase;
 import fileReader.FileReader;
 
 class Common {
@@ -74,14 +76,14 @@ class Guard {
 	}
 }
 
-public class Day6 {
-	public static void part1(String path) {
+public class Day6 extends DayBase {
+	public void part1(String path) {
 		Guard guard = new Guard(FileReader.readData(path), -1, -1);
 		while (guard.walk()) {}
 		System.out.println(String.format("Total cell guard visited: %d", guard.visited.size()));
 	}
 
-	public static void part2(String path) {
+	public void part2(String path) {
 		ArrayList<String> data = FileReader.readData(path);
 
 		HashSet<String> obstaclePlacementLocation = new HashSet<>();
@@ -100,13 +102,5 @@ public class Day6 {
 			}
 		}
 		System.out.println(String.format("Total possible obstacle placement: %d", obstaclePlacementLocation.size()));
-	}
-
-	public static void runDay() {
-		String dataPath = "data/day6.txt";
-		System.out.println("Day 6 Run: ");
-		part1(dataPath);
-		part2(dataPath);
-		System.out.println("-----------------");
 	}
 }

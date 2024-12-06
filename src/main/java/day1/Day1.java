@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import fileReader.FileReader;
+import dayBase.DayBase;
 
-public class Day1 {
+public class Day1 extends DayBase {
 	// Takes in array of lines of data file
 	// Output an array containing 2 arrays for left and right data
 	private static ArrayList<ArrayList<Integer>> formatData(ArrayList<String> dat) {
@@ -29,7 +30,7 @@ public class Day1 {
 		return dataFormatted;
 	}
 
-	public static void part1(String path) {
+	public void part1(String path) {
 		ArrayList<ArrayList<Integer>> data = getData(path);
 		int sum = 0;
 		Collections.sort(data.get(0));
@@ -42,7 +43,7 @@ public class Day1 {
 		System.out.println(String.format("Part 1: %d", sum));
 	}
 
-	public static void part2(String path) {
+	public void part2(String path) {
 		ArrayList<ArrayList<Integer>> data = getData(path);
 		ArrayList<Integer> dataLeft = data.get(0);
 		ArrayList<Integer> dataRight = data.get(1);
@@ -73,13 +74,5 @@ public class Day1 {
 		}
 
 		System.out.println(String.format("Part 2: %d", sum));
-	}
-
-	public static void runDay() {
-		String dataPath = "data/day1.txt";
-		System.out.println("Day 1 Run: ");
-		part1(dataPath);
-		part2(dataPath);
-		System.out.println("-----------------");
 	}
 }
