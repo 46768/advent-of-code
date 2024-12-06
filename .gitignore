@@ -10,3 +10,5 @@ data/
 .settings/
 .classpath
 .project
+jdt.ls-java-project/
+.metadata/
