@@ -76,16 +76,22 @@ class Guard {
 	}
 }
 
-public class Day6 extends DayBase {
-	public void part1(String path) {
-		Guard guard = new Guard(FileReader.readData(path), -1, -1);
+public class Day6 extends DayBase<ArrayList<String>> {
+	public Day6(String path) {
+		super(path);
+	}
+	
+	protected ArrayList<String> parseInput(String path) {
+		return FileReader.readData(path);
+	}
+
+	public void part1() {
+		Guard guard = new Guard(data, -1, -1);
 		while (guard.walk()) {}
 		System.out.println(String.format("Total cell guard visited: %d", guard.visited.size()));
 	}
 
-	public void part2(String path) {
-		ArrayList<String> data = FileReader.readData(path);
-
+	public void part2() {
 		HashSet<String> obstaclePlacementLocation = new HashSet<>();
 		Guard mainGuard = new Guard(data, -1, -1);
 		while (mainGuard.walk()) {

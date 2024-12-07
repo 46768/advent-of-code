@@ -9,8 +9,13 @@ import java.util.Collections;
 import dayBase.DayBase;
 import fileReader.FileReader;
 
-public class Day5 extends DayBase {
-	private static ArrayList<ArrayList<String>> formatData(ArrayList<String> data) {
+public class Day5 extends DayBase<ArrayList<ArrayList<String>>> {
+	public Day5(String path) {
+		super(path);
+	}
+
+	protected ArrayList<ArrayList<String>> parseInput(String path) {
+		ArrayList<String> dat = FileReader.readData(path);
 		ArrayList<String> pageOrderingRule = new ArrayList<String>();
 		ArrayList<String> pagePrintOrder = new ArrayList<String>();
 		
@@ -18,7 +23,7 @@ public class Day5 extends DayBase {
 
 		boolean isPageRule = true;
 
-		for (String line : data) {
+		for (String line : dat) {
 			if (line.equals("")) {
 				isPageRule = false;
 				continue;
@@ -84,8 +89,7 @@ public class Day5 extends DayBase {
 		return arr.get((int)(Math.ceil(arr.size()/2)));
 	}
 
-	public void part1(String path) {
-		ArrayList<ArrayList<String>> data = formatData(FileReader.readData(path));
+	public void part1() {
 		// get hashmap with closer as key and openers as hashset value
 		HashMap<Integer, HashSet<Integer>> printRule = formatRule(data.get(0), true);
 		ArrayList<ArrayList<Integer>> printOrder = formatPrintOrder(data.get(1));
@@ -101,8 +105,7 @@ public class Day5 extends DayBase {
 		System.out.println(String.format("Sum of middle page number of valid order: %d", middleSum));
 	}
 
-	public void part2(String path) {
-		ArrayList<ArrayList<String>> data = formatData(FileReader.readData(path));
+	public void part2() {
 		// get hashmap with closer as key and openers as hashset value
 		HashMap<Integer, HashSet<Integer>> printRule = formatRule(data.get(0), true);
 		ArrayList<ArrayList<Integer>> printOrder = formatPrintOrder(data.get(1));

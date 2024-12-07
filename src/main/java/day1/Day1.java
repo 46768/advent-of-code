@@ -7,15 +7,19 @@ import java.util.HashMap;
 import fileReader.FileReader;
 import dayBase.DayBase;
 
-public class Day1 extends DayBase {
-	// Takes in array of lines of data file
-	// Output an array containing 2 arrays for left and right data
-	private static ArrayList<ArrayList<Integer>> formatData(ArrayList<String> dat) {
-		ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
-		res.add(new ArrayList<Integer>());
-		res.add(new ArrayList<Integer>());
-		for (int idx = 0; idx < dat.size(); idx++) {
-			String line = dat.get(idx);
+public class Day1 extends DayBase<ArrayList<ArrayList<Integer>>> {
+
+	public Day1(String path) {
+		super(path);
+	}
+
+	protected ArrayList<ArrayList<Integer>> parseInput(String path) {
+		ArrayList<String> data = FileReader.readData(path);
+		ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+		res.add(new ArrayList<>());
+		res.add(new ArrayList<>());
+		for (int idx = 0; idx < data.size(); idx++) {
+			String line = data.get(idx);
 			String[] pairValue = line.split("   ");
 			int leftValue = Integer.parseInt(pairValue[0]);
 			int rightValue = Integer.parseInt(pairValue[1]);
@@ -25,13 +29,7 @@ public class Day1 extends DayBase {
 		return res;
 	}
 
-	private static ArrayList<ArrayList<Integer>> getData(String path) {
-		ArrayList<ArrayList<Integer>> dataFormatted = formatData(FileReader.readData(path));
-		return dataFormatted;
-	}
-
-	public void part1(String path) {
-		ArrayList<ArrayList<Integer>> data = getData(path);
+	public void part1() {
 		int sum = 0;
 		Collections.sort(data.get(0));
 		Collections.sort(data.get(1));
@@ -40,39 +38,37 @@ public class Day1 extends DayBase {
 			int rightVal = data.get(1).get(i);
 			sum += Math.abs(leftVal - rightVal);
 		}
-		System.out.println(String.format("Part 1: %d", sum));
+		System.out.println(String.format("Distance Sum: %d", sum));
 	}
 
-	public void part2(String path) {
-		ArrayList<ArrayList<Integer>> data = getData(path);
+	public void part2() {
 		ArrayList<Integer> dataLeft = data.get(0);
-		ArrayList<Integer> dataRight = data.get(1);
-		HashMap<Integer, Integer> leftMap = new HashMap<Integer, Integer>();
-		HashMap<Integer, Integer> rightMap = new HashMap<Integer, Integer>();
+		ArrayList<HashMap<Integer, Integer>> maps = new ArrayList<>();
+		maps.add(new HashMap<>());
+		maps.add(new HashMap<>());
 		int sum = 0;
 
 		for (int i = 0; i < dataLeft.size(); i++) {
-			int valLeft = dataLeft.get(i);
-			int valRight = dataRight.get(i);
-			if (!leftMap.containsKey(valLeft)) {
-				leftMap.put(valLeft, 1);
-			} else {
-				int stored = leftMap.get(valLeft);
-				leftMap.replace(valLeft, stored+1);
-			}
-			if (!rightMap.containsKey(valRight)) {
-				rightMap.put(valRight, 1);
-			} else {
-				int stored = rightMap.get(valRight);
-				rightMap.replace(valRight, stored+1);
+			for (int j = 0; j < 2; j++) {
+				ArrayList<Integer> line = data.get(j);
+				HashMap<Integer, Integer> map = maps.get(j);
+				int val = line.get(i);
+				if (!map.containsKey(val)) {
+					map.put(val, 1);
+				} else {
+					int stored = map.get(val);
+					map.replace(val, stored+1);
+				}
 			}
 		}
 
+		HashMap<Integer, Integer> leftMap = maps.get(0);
+		HashMap<Integer, Integer> rightMap = maps.get(1);
 		for (int key : leftMap.keySet()) {
 			int rightMatch = rightMap.containsKey(key) ? rightMap.get(key) : 0;
 			sum += key * leftMap.get(key) * rightMatch;
 		}
 
-		System.out.println(String.format("Part 2: %d", sum));
+		System.out.println(String.format("Similarity Score: %d", sum));
 	}
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import dayBase.DayBase;
 import fileReader.FileReader;
 
-public class Day4 extends DayBase {
+public class Day4 extends DayBase<ArrayList<String>> {
 	private static int[][] searchIterator = {
 	   //x, y
 		{0, 1},
@@ -24,8 +24,15 @@ public class Day4 extends DayBase {
 		return matrix.get(x).charAt(y);
 	}
 
-	public void part1(String path) {
-		ArrayList<String> data = FileReader.readData(path);
+	public Day4(String path) {
+		super(path);
+	}
+
+	protected ArrayList<String> parseInput(String path) {
+		return FileReader.readData(path);
+	}
+
+	public void part1() {
 		int lineCnt = data.size();
 		int strCnt = data.get(0).length();
 
@@ -56,8 +63,7 @@ public class Day4 extends DayBase {
 		System.out.println(String.format("XMAS Count: %d", count));
 	}
 
-	public void part2(String path) {
-		ArrayList<String> data = FileReader.readData(path);
+	public void part2() {
 		int lineCnt = data.size();
 		int strCnt = data.get(0).length();
 
@@ -70,29 +76,19 @@ public class Day4 extends DayBase {
 				char[] pair2 = {getChar(data, i+1, j-1), getChar(data, i-1, j+1)};
 
 
-				if (pair1[0] == 'X') {
-					continue;
-				}
-				if (pair2[0] == 'X') {
-					continue;
-				}
-				if (pair1[1] == 'X') {
-					continue;
-				}
-				if (pair2[1] == 'X') {
-					continue;
-				}
-				if (pair1[0] == 'A') {
-					continue;
-				}
-				if (pair2[0] == 'A') {
-					continue;
-				}
-				if (pair1[1] == 'A') {
-					continue;
-				}
-				if (pair2[1] == 'A') {
-					continue;
+				for (int k = 0; i < 2; i++) {
+					if (pair1[k] == 'X') {
+						continue;
+					}
+					if (pair2[k] == 'X') {
+						continue;
+					}
+					if (pair1[k] == 'A') {
+						continue;
+					}
+					if (pair2[k] == 'A') {
+						continue;
+					}
 				}
 
 				if (pair1[0] == pair1[1]) {

@@ -5,8 +5,13 @@ import java.util.ArrayList;
 import dayBase.DayBase;
 import fileReader.FileReader;
 
-public class Day2 extends DayBase {
-	private static ArrayList<ArrayList<Integer>> formatData(ArrayList<String> dat) {
+public class Day2 extends DayBase<ArrayList<ArrayList<Integer>>> {
+	public Day2(String path) {
+		super(path);
+	}
+
+	protected ArrayList<ArrayList<Integer>> parseInput(String path) {
+		ArrayList<String> dat = FileReader.readData(path);
 		ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
 		for (String line : dat) {
 			ArrayList<Integer> report = new ArrayList<Integer>();
@@ -17,10 +22,6 @@ public class Day2 extends DayBase {
 			res.add(report);
 		}
 		return res;
-	}
-
-	private static ArrayList<ArrayList<Integer>> getData(String path) {
-			return formatData(FileReader.readData(path));
 	}
 
 	private static int checkReport(ArrayList<Integer> report) {
@@ -36,9 +37,7 @@ public class Day2 extends DayBase {
 		return -1;
 	}
 
-	public void part1(String path) {
-		ArrayList<ArrayList<Integer>> data = getData(path);
-
+	public void part1() {
 		int safeCount = 0;
 
 		for (ArrayList<Integer> report : data) {
@@ -50,9 +49,7 @@ public class Day2 extends DayBase {
 		System.out.println(String.format("Report Safe Count: %d", safeCount));
 	}
 
-	public void part2(String path) {
-		ArrayList<ArrayList<Integer>> data = getData(path);
-
+	public void part2() {
 		int safeCount = 0;
 		ArrayList<ArrayList<Integer>> saveableReport = new ArrayList<ArrayList<Integer>>();
 

@@ -7,13 +7,16 @@ import java.util.regex.Pattern;
 import dayBase.DayBase;
 import fileReader.FileReader;
 
-public class Day3 extends DayBase {
-	private static ArrayList<String> getData(String path) {
+public class Day3 extends DayBase<ArrayList<String>> {
+	public Day3(String path) {
+		super(path);
+	}
+
+	protected ArrayList<String> parseInput(String path) {
 			return FileReader.readData(path);
 	}
 
-	public void part1(String path) {
-		ArrayList<String> data = getData(path);
+	public void part1() {
 		String regex = "mul\\(\\d*,\\d*\\)";
 
 		int sum = 0;
@@ -32,8 +35,7 @@ public class Day3 extends DayBase {
 		System.out.println(String.format("Sum Of Mul() FN: %d", sum));
 	}
 
-	public void part2(String path) {
-		ArrayList<String> data = getData(path);
+	public void part2() {
 		String regex = "(mul\\(\\d*,\\d*\\))|(do\\(\\))|(don't\\(\\))";
 
 		int sum = 0;
