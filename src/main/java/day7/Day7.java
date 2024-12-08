@@ -55,21 +55,21 @@ class CalibrationExtended {
 		String result = spacePadded.replace(' ', '0');
 		return result;
 	}
-	public boolean testOperators(String operators) {
-		String paddedOperators = padOperators(operators);
+	public boolean testOperators(long operators) {
 		long result = operand.get(0);
 		for (int i = 1; i < operand.size(); i++) {
-			char operator = paddedOperators.charAt(i-1);
+			long operator = operators % 10;
 			long currentOperand = operand.get(i);
-			if (operator == '0') {
+			if (operator == 0) {
 				result += currentOperand;
-			} else if (operator == '1') {
+			} else if (operator == 1) {
 				result *= currentOperand;
 			} else {
 				String resString = String.format("%d", result);
 				String opString = String.format("%d", currentOperand);
 				result = Long.parseUnsignedLong(resString.concat(opString));
 			}
+			operators = Math.floorDiv(operators, 10);
 		}
 		return result == target;
 	}
@@ -84,7 +84,7 @@ public class Day7 extends DayBase<ArrayList<String>> {
 		return FileReader.readData(path);
 	}
 
-	private String getBase3(long base10) {
+	private long getBase3(long base10) {
 		long result = 0, factor = 1;
 		while (base10 > 0) {
 			result += base10 % 3 * factor;
@@ -92,7 +92,7 @@ public class Day7 extends DayBase<ArrayList<String>> {
 			factor *= 10;
 		}
 
-		return String.format("%d", result);
+		return result;
 	}
 
 	public void part1() {
@@ -105,6 +105,7 @@ public class Day7 extends DayBase<ArrayList<String>> {
 				if (calibrationTest.testOperators(i) && !testedCalibration.contains(j)) {
 					testedCalibration.add(j);
 					targetSum += calibrationTest.target;
+					break;
 				}
 			}
 		}
@@ -118,10 +119,11 @@ public class Day7 extends DayBase<ArrayList<String>> {
 			String line = data.get(j);
 			CalibrationExtended calibrationTest = new CalibrationExtended(line);
 			for (int i = 0; i < Math.pow(3, calibrationTest.operand.size()-1); i++) {
-				String operators = getBase3(i);
+				long operators = getBase3(i);
 				if (calibrationTest.testOperators(operators) && !testedCalibration.contains(j)) {
 					testedCalibration.add(j);
 					targetSum += calibrationTest.target;
+					break;
 				}
 			}
 		}
