@@ -74,6 +74,18 @@ public class Day8 extends DayBase<HashMap<Character, ArrayList<Integer>>> {
 		Logger.log("Part 1: %d", antinodes.size());
 	}
 
+	private void repeatAntinode(HashSet<Integer> antinodes, int[] antPos, int[] offset) {
+		while (positionInbound(antPos)) {
+			int[] antiPos = {antPos[0] + offset[0], antPos[1] + offset[1]};
+			int anti = antiPos[0]*sx + antiPos[1];
+			if (positionInbound(antiPos)) {
+				antinodes.add(anti);
+				antPos[0] = antiPos[0];
+				antPos[1] = antiPos[1];
+			} else break;
+		}
+	}
+
 	public void part2() {
 		HashSet<Integer> antinodes = new HashSet<>();
 		Iterator<Character> dataIterator = data.keySet().iterator();
@@ -93,24 +105,8 @@ public class Day8 extends DayBase<HashMap<Character, ArrayList<Integer>>> {
 					int[] anti1Offset = {ant1Pos[0] - ant2Pos[0], ant1Pos[1] - ant2Pos[1]};
 					int[] anti2Offset = {ant2Pos[0] - ant1Pos[0], ant2Pos[1] - ant1Pos[1]};
 
-					while (positionInbound(ant1Pos)) {
-						int[] anti1Pos = {ant1Pos[0] + anti1Offset[0], ant1Pos[1] + anti1Offset[1]};
-						int anti1 = anti1Pos[0]*sx + anti1Pos[1];
-						if (positionInbound(anti1Pos)) {
-							antinodes.add(anti1);
-							ant1Pos[0] = anti1Pos[0];
-							ant1Pos[1] = anti1Pos[1];
-						} else break;
-					}
-					while (positionInbound(ant2Pos)) {
-						int[] anti2Pos = {ant2Pos[0] + anti2Offset[0], ant2Pos[1] + anti2Offset[1]};
-						int anti2 = anti2Pos[0]*sx + anti2Pos[1];
-						if (positionInbound(anti2Pos)) {
-							antinodes.add(anti2);
-							ant2Pos[0] = anti2Pos[0];
-							ant2Pos[1] = anti2Pos[1];
-						} else break;
-					}
+					repeatAntinode(antinodes, ant1Pos, anti1Offset);
+					repeatAntinode(antinodes, ant2Pos, anti2Offset);
 				}
 			}
 		}
