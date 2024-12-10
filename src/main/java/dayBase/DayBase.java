@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import logger.Logger;
 import input.InputData;
+import timer.Timer;
 
 public abstract class DayBase<T> {
 	protected T data;
@@ -30,14 +31,12 @@ public abstract class DayBase<T> {
 				return;
 			}
 			Instant startTime = Instant.now();
-			part1();
-			Instant part1Time = Instant.now();
-			part2();
+			Timer.measure("Part 1", this::part1);
+			Logger.print("\n");
+			Timer.measure("Part 2", this::part2);
 			Instant endTime = Instant.now();
 
 			Logger.print("\n");
-			Logger.log("Part 1 took: " + Logger.formatTimeFromNanos(Duration.between(startTime, part1Time).toNanos()));
-			Logger.log("Part 2 took: " + Logger.formatTimeFromNanos(Duration.between(part1Time, endTime).toNanos()));
 			Logger.log("Total took: " + Logger.formatTimeFromNanos(Duration.between(startTime, endTime).toNanos()));
 		} catch (Exception e) {
 			e.printStackTrace();
