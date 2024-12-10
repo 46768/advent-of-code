@@ -3,21 +3,19 @@ package day8;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import dayBase.DayBase;
-import fileReader.FileReader;
 import logger.Logger;
+import input.InputData;
 
 public class Day8 extends DayBase<HashMap<Character, ArrayList<Integer>>> {
 	private int sx;
 	private int sy;
-	public Day8(String path) {
-		super(path);
+	public Day8(InputData dat) {
+		super(dat);
 	}
 
-	protected HashMap<Character, ArrayList<Integer>> parseInput(String path) {
-		ArrayList<String> dat = FileReader.readData(path);
+	protected HashMap<Character, ArrayList<Integer>> parseInput(ArrayList<String> dat) {
 		HashMap<Character, ArrayList<Integer>> charMatrix = new HashMap<>();
 		sx = dat.size();
 		sy = dat.get(0).length();

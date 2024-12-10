@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.HashMap;
 
 import dayBase.DayBase;
-import fileReader.FileReader;
 import logger.Logger;
+import input.InputData;
 
 class Common {
 	public static char getChar(ArrayList<String> matrix, int x, int y) {
@@ -85,12 +85,12 @@ main:
 }
 
 public class Day6 extends DayBase<ArrayList<String>> {
-	public Day6(String path) {
-		super(path);
+	public Day6(InputData dat) {
+		super(dat);
 	}
 
-	protected ArrayList<String> parseInput(String path) {
-		return FileReader.readData(path);
+	protected ArrayList<String> parseInput(ArrayList<String> dat) {
+		return dat;
 	}
 
 	public void part1() {

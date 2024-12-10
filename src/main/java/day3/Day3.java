@@ -5,15 +5,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dayBase.DayBase;
-import fileReader.FileReader;
+import logger.Logger;
+import input.InputData;
 
 public class Day3 extends DayBase<ArrayList<String>> {
-	public Day3(String path) {
-		super(path);
+	public Day3(InputData dat) {
+		super(dat);
 	}
 
-	protected ArrayList<String> parseInput(String path) {
-			return FileReader.readData(path);
+	protected ArrayList<String> parseInput(ArrayList<String> dat) {
+			return dat;
 	}
 
 	private int parseMul(String code) {
@@ -44,7 +45,7 @@ public class Day3 extends DayBase<ArrayList<String>> {
 				sum += parseMul(match);
 			}
 		}
-		System.out.println(String.format("Sum Of Mul() FN: %d", sum));
+		Logger.log("Sum Of Mul() FN: %d", sum);
 	}
 
 	public void part2() {
@@ -80,7 +81,7 @@ public class Day3 extends DayBase<ArrayList<String>> {
 				}
 			}
 		}
-		System.out.println(String.format("Sum Of Mul() With Enable/Disable: %d", sum));
+		Logger.log("Sum Of Mul() With Enable/Disable: %d", sum);
 	}
 }
 

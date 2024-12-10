@@ -3,7 +3,8 @@ package day4;
 import java.util.ArrayList;
 
 import dayBase.DayBase;
-import fileReader.FileReader;
+import logger.Logger;
+import input.InputData;
 
 public class Day4 extends DayBase<ArrayList<String>> {
 	private static int[][] searchIterator = {
@@ -24,12 +25,12 @@ public class Day4 extends DayBase<ArrayList<String>> {
 		return data.get(x).charAt(y);
 	}
 
-	public Day4(String path) {
-		super(path);
+	public Day4(InputData dat) {
+		super(dat);
 	}
 
-	protected ArrayList<String> parseInput(String path) {
-		return FileReader.readData(path);
+	protected ArrayList<String> parseInput(ArrayList<String> dat) {
+		return dat;
 	}
 
 	public void part1() {
@@ -60,7 +61,7 @@ public class Day4 extends DayBase<ArrayList<String>> {
 			}
 		}
 
-		System.out.println(String.format("XMAS Count: %d", count));
+		Logger.log("XMAS Count: %d", count);
 	}
 
 	private boolean checkPair(char[] pair, char checkChar) {
@@ -100,6 +101,6 @@ public class Day4 extends DayBase<ArrayList<String>> {
 			}
 		}
 
-		System.out.println(String.format("X-MAS Count: %d", count));
+		Logger.log("X-MAS Count: %d", count);
 	}
 }

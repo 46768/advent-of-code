@@ -3,15 +3,15 @@ package day2;
 import java.util.ArrayList;
 
 import dayBase.DayBase;
-import fileReader.FileReader;
+import logger.Logger;
+import input.InputData;
 
 public class Day2 extends DayBase<ArrayList<ArrayList<Integer>>> {
-	public Day2(String path) {
-		super(path);
+	public Day2(InputData dat) {
+		super(dat);
 	}
 
-	protected ArrayList<ArrayList<Integer>> parseInput(String path) {
-		ArrayList<String> dat = FileReader.readData(path);
+	protected ArrayList<ArrayList<Integer>> parseInput(ArrayList<String> dat) {
 		ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
 		for (String line : dat) {
 			ArrayList<Integer> report = new ArrayList<Integer>();
@@ -53,7 +53,7 @@ public class Day2 extends DayBase<ArrayList<ArrayList<Integer>>> {
 			}
 		}
 
-		System.out.println(String.format("Report Safe Count: %d", safeCount));
+		Logger.log("Report Safe Count: %d", safeCount);
 	}
 
 	public void part2() {
@@ -82,6 +82,6 @@ public class Day2 extends DayBase<ArrayList<ArrayList<Integer>>> {
 			}
 		}
 
-		System.out.println(String.format("Report Safe Count With Problem Dampener: %d", safeCount));
+		Logger.log("Report Safe Count With Problem Dampener: %d", safeCount);
 	}
 }

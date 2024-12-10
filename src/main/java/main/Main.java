@@ -11,22 +11,29 @@ import day8.Day8;
 import day9.Day9;
 import day10.Day10;
 
+import logger.Logger;
+import input.Input;
+
 public class Main {
 	public static void main(String[] arg) {
+		Input inputManager = new Input("/main", "/test", "day%d.txt");
 		if (arg.length == 1 && arg[0].equals("fetch")) {
-			System.out.println("TODO: implement input fetcher");
+			Logger.warn("TODO: implement input fetcher");
 			return;
+		} else if (arg.length == 1 && arg[0].equals("test")) {
+			inputManager.useTest();
+			Logger.log("Using test data");
 		}
-		
-		new Day1("data/day1.txt").runDay();
-		new Day2("data/day2.txt").runDay();
-		new Day3("data/day3.txt").runDay();
-		new Day4("data/day4.txt").runDay();
-		new Day5("data/day5.txt").runDay();
-		//new Day6("data/day6.txt").runDay(); // Long running Day (~4 s)
-		//new Day7("data/day7.txt").runDay(); // Long running Day (~2 s)
-		new Day8("data/day8.txt").runDay();
-		new Day9("data/day9.txt").runDay();
-		new Day10("data/day10.txt").runDay();
+
+		new Day1(inputManager.getDay(1)).runDay();
+		new Day2(inputManager.getDay(2)).runDay();
+		new Day3(inputManager.getDay(3)).runDay();
+		new Day4(inputManager.getDay(4)).runDay();
+		new Day5(inputManager.getDay(5)).runDay();
+		//new Day6(inputManager.getDay(6)).runDay(); // Long running day (~5s)
+		//new Day7(inputManager.getDay(7)).runDay(); // Long running day (~2s)
+		new Day8(inputManager.getDay(8)).runDay();
+		new Day9(inputManager.getDay(9)).runDay();
+		new Day10(inputManager.getDay(10)).runDay();
 	}
 }

@@ -1,11 +1,10 @@
 package day7;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import dayBase.DayBase;
-import fileReader.FileReader;
 import logger.Logger;
+import input.InputData;
 
 class Calibration {
 	long target;
@@ -74,12 +73,12 @@ class CalibrationExtended {
 }
 
 public class Day7 extends DayBase<ArrayList<String>> {
-	public Day7(String path) {
-		super(path);
+	public Day7(InputData dat) {
+		super(dat);
 	}
 
-	protected ArrayList<String> parseInput(String path) {
-		return FileReader.readData(path);
+	protected ArrayList<String> parseInput(ArrayList<String> dat) {
+		return dat;
 	}
 
 	private long getBase3(long base10) {

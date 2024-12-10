@@ -4,17 +4,17 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import fileReader.FileReader;
 import dayBase.DayBase;
+import logger.Logger;
+import input.InputData;
 
 public class Day1 extends DayBase<ArrayList<ArrayList<Integer>>> {
 
-	public Day1(String path) {
-		super(path);
+	public Day1(InputData dat) {
+		super(dat);
 	}
 
-	protected ArrayList<ArrayList<Integer>> parseInput(String path) {
-		ArrayList<String> dat = FileReader.readData(path);
+	protected ArrayList<ArrayList<Integer>> parseInput(ArrayList<String> dat) {
 		ArrayList<ArrayList<Integer>> res = new ArrayList<>();
 
 		// Left Side
@@ -46,7 +46,7 @@ public class Day1 extends DayBase<ArrayList<ArrayList<Integer>>> {
 			int rightVal = data.get(1).get(i);
 			sum += Math.abs(leftVal - rightVal);
 		}
-		System.out.println(String.format("Distance Sum: %d", sum));
+		Logger.log("Distance Sum: %d", sum);
 	}
 
 	// Put data on index dataIdx of data (0 for left, 1 for right) into a hashmap
@@ -80,6 +80,6 @@ public class Day1 extends DayBase<ArrayList<ArrayList<Integer>>> {
 			sum += key * leftMap.get(key) * rightMap.get(key);
 		}
 
-		System.out.println(String.format("Similarity Score: %d", sum));
+		Logger.log("Similarity Score: %d", sum);
 	}
 }

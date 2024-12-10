@@ -7,15 +7,15 @@ import java.util.Iterator;
 import java.util.Collections;
 
 import dayBase.DayBase;
-import fileReader.FileReader;
 import logger.Logger;
+import input.InputData;
 
 public class Day5 extends DayBase<ArrayList<ArrayList<String>>> {
 	private HashMap<Integer, HashSet<Integer>> printRule;
 	private ArrayList<ArrayList<Integer>> printOrder;
 
-	public Day5(String path) {
-		super(path);
+	public Day5(InputData dat) {
+		super(dat);
 	}
 
 	private static HashMap<Integer, HashSet<Integer>> formatRule(ArrayList<String> rules) {
@@ -47,8 +47,7 @@ public class Day5 extends DayBase<ArrayList<ArrayList<String>>> {
 		return printOrderList;
 	}
 
-	protected ArrayList<ArrayList<String>> parseInput(String path) {
-		ArrayList<String> dat = FileReader.readData(path);
+	protected ArrayList<ArrayList<String>> parseInput(ArrayList<String> dat) {
 		ArrayList<String> pageOrderingRule = new ArrayList<String>();
 		ArrayList<String> pagePrintOrder = new ArrayList<String>();
 		

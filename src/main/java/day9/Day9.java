@@ -3,19 +3,19 @@ package day9;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import fileReader.FileReader;
-import dayBase.DayBase;
 import logger.Logger;
+import dayBase.DayBase;
+import input.InputData;
 
 public class Day9 extends DayBase<ArrayList<Integer>> {
-	public Day9(String path) {
-		super(path);
+	public Day9(InputData dat) {
+		super(dat);
 	}
 
-	protected ArrayList<Integer> parseInput(String path) {
+	protected ArrayList<Integer> parseInput(ArrayList<String> datt) {
 		ArrayList<Integer> result = new ArrayList<>();
 
-		String dat = FileReader.readData(path).get(0);
+		String dat = datt.get(0);
 		boolean isEmpty = false;
 		int blockData = 0;
 		for (int i = 0; i < dat.length(); i++) {
