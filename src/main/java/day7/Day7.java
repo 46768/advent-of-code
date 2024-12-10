@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import dayBase.DayBase;
 import fileReader.FileReader;
+import logger.Logger;
 
 class Calibration {
 	long target;
@@ -20,17 +21,19 @@ class Calibration {
 	}
 
 	public boolean testOperators(int operators) {
-		int operatorReversed = (operators);
+		int operatorsVar = operators;
 		long result = operand.get(0);
 		for (int i = 1; i < operand.size(); i++) {
-			int operator = operatorReversed & 1;
+			int operator = operatorsVar & 1;
 			long currentOperand = operand.get(i);
+			// Operators are stored as bits, 0 as addition, 1 as multiplication
+			// this allows for compact operator storage
 			if (operator == 0) {
 				result += currentOperand;
 			} else {
 				result *= currentOperand;
 			}
-			operatorReversed >>= 1;
+			operatorsVar >>= 1;
 		}
 		return result == target;
 	}
@@ -49,24 +52,19 @@ class CalibrationExtended {
 		}
 	}
 
-	private String padOperators(String operators) {
-		String formatString = "%" + (operand.size()-1) + "s";
-		String spacePadded = String.format(formatString, operators);
-		String result = spacePadded.replace(' ', '0');
-		return result;
-	}
 	public boolean testOperators(long operators) {
 		long result = operand.get(0);
 		for (int i = 1; i < operand.size(); i++) {
 			long operator = operators % 10;
 			long currentOperand = operand.get(i);
+			// Operates on tenary integer, 0 as addition, 1 as multiplication, 2 as concatenation
 			if (operator == 0) {
 				result += currentOperand;
 			} else if (operator == 1) {
 				result *= currentOperand;
 			} else {
-				String resString = String.format("%d", result);
-				String opString = String.format("%d", currentOperand);
+				String resString = Long.toString(result);
+				String opString = Long.toString(currentOperand);
 				result = Long.parseUnsignedLong(resString.concat(opString));
 			}
 			operators = Math.floorDiv(operators, 10);
@@ -96,38 +94,36 @@ public class Day7 extends DayBase<ArrayList<String>> {
 	}
 
 	public void part1() {
-		HashSet<Integer> testedCalibration = new HashSet<>();
 		long targetSum = 0;
-		for (int j = 0; j < data.size(); j++) {
-			String line = data.get(j);
+		for (String line : data) {
 			Calibration calibrationTest = new Calibration(line);
+			// Iterate over all possible combination of binary birs for additon and multiplication
 			for (int i = 0; i < Math.pow(2, calibrationTest.operand.size()-1); i++) {
-				if (calibrationTest.testOperators(i) && !testedCalibration.contains(j)) {
-					testedCalibration.add(j);
+				if (calibrationTest.testOperators(i)) {
 					targetSum += calibrationTest.target;
+					// Exit early since we dont care if theres more solutions available
 					break;
 				}
 			}
 		}
-		System.out.println(String.format("Sum of possible calibration: %d", targetSum));
+		Logger.log("Sum of possible calibration: %d", targetSum);
 	}
 
 	public void part2() {
-		HashSet<Integer> testedCalibration = new HashSet<>();
 		long targetSum = 0;
-		for (int j = 0; j < data.size(); j++) {
-			String line = data.get(j);
+		for (String line : data) {
 			CalibrationExtended calibrationTest = new CalibrationExtended(line);
+			// Iterate over all possible tenary bits for addtion, multiplication, concatenation
 			for (int i = 0; i < Math.pow(3, calibrationTest.operand.size()-1); i++) {
 				long operators = getBase3(i);
-				if (calibrationTest.testOperators(operators) && !testedCalibration.contains(j)) {
-					testedCalibration.add(j);
+				if (calibrationTest.testOperators(operators)) {
 					targetSum += calibrationTest.target;
+					// Exit early since we dont care if theres more solutions available
 					break;
 				}
 			}
 		}
 
-		System.out.println(String.format("Sum of possible extended calibration: %d", targetSum));
+		Logger.log("Sum of possible extended calibration: %d", targetSum);
 	}
 }

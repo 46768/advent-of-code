@@ -112,7 +112,6 @@ public class Day9 extends DayBase<ArrayList<Integer>> {
 			ptr1Idx = 0;
 
 		}
-		Logger.log(data.size());
 		Logger.log("Part 2: %d", getChecksum(dataClone));
 	}
 }

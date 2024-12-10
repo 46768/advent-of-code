@@ -8,42 +8,20 @@ import java.util.Collections;
 
 import dayBase.DayBase;
 import fileReader.FileReader;
+import logger.Logger;
 
 public class Day5 extends DayBase<ArrayList<ArrayList<String>>> {
+	private HashMap<Integer, HashSet<Integer>> printRule;
+	private ArrayList<ArrayList<Integer>> printOrder;
+
 	public Day5(String path) {
 		super(path);
 	}
 
-	protected ArrayList<ArrayList<String>> parseInput(String path) {
-		ArrayList<String> dat = FileReader.readData(path);
-		ArrayList<String> pageOrderingRule = new ArrayList<String>();
-		ArrayList<String> pagePrintOrder = new ArrayList<String>();
-		
-		ArrayList<ArrayList<String>> formatted = new ArrayList<ArrayList<String>>();
-
-		boolean isPageRule = true;
-
-		for (String line : dat) {
-			if (line.equals("")) {
-				isPageRule = false;
-				continue;
-			}
-			if (isPageRule) {
-				pageOrderingRule.add(line);
-			} else {
-				pagePrintOrder.add(line);
-			}
-		}
-
-		formatted.add(pageOrderingRule);
-		formatted.add(pagePrintOrder);
-		return formatted;
-	}
-
-	private static HashMap<Integer, HashSet<Integer>> formatRule(ArrayList<String> rules, boolean reversed) {
+	private static HashMap<Integer, HashSet<Integer>> formatRule(ArrayList<String> rules) {
 		HashMap<Integer, HashSet<Integer>> ruleHashMap = new HashMap<>();
-		int keyIdx = reversed ? 1 : 0;
-		int valueIdx = reversed ? 0 : 1;
+		int keyIdx = 1;
+		int valueIdx = 0;
 		for (String rule : rules) {
 			String[] ruleComponent = rule.split("\\|");
 			int key = Integer.parseInt(ruleComponent[keyIdx]);
@@ -69,88 +47,129 @@ public class Day5 extends DayBase<ArrayList<ArrayList<String>>> {
 		return printOrderList;
 	}
 
-	private static boolean checkOrder(HashMap<Integer, HashSet<Integer>> rules, ArrayList<Integer> order) {
+	protected ArrayList<ArrayList<String>> parseInput(String path) {
+		ArrayList<String> dat = FileReader.readData(path);
+		ArrayList<String> pageOrderingRule = new ArrayList<String>();
+		ArrayList<String> pagePrintOrder = new ArrayList<String>();
+		
+		ArrayList<ArrayList<String>> formatted = new ArrayList<ArrayList<String>>();
+
+		boolean isPageRule = true;
+
+		for (String line : dat) {
+			// Input separator between page ordering rule and
+			// page print order
+			if (line.equals("")) {
+				isPageRule = false;
+				continue;
+			}
+			if (isPageRule) {
+				pageOrderingRule.add(line);
+			} else {
+				pagePrintOrder.add(line);
+			}
+		}
+
+		formatted.add(pageOrderingRule);
+		formatted.add(pagePrintOrder);
+		this.printRule = formatRule(pageOrderingRule);
+		this.printOrder = formatPrintOrder(pagePrintOrder);
+		return formatted;
+	}
+
+
+	private boolean checkOrder(ArrayList<Integer> order) {
 			// get closer from hashmap, put the openers in here as blacklist as it will break the rule if read
-			HashSet<Integer> deathSet = new HashSet<>();
+			HashSet<Integer> invalidPage = new HashSet<>();
 			
 			for (Integer page : order) {
-				if (deathSet.contains(page)) {
+				if (invalidPage.contains(page)) {
 					return false;
 				}
-				if (rules.containsKey(page)) {
-					HashSet<Integer> openers = rules.get(page);
-					deathSet.addAll(openers);
+				if (printRule.containsKey(page)) {
+					HashSet<Integer> openers = printRule.get(page);
+					invalidPage.addAll(openers);
 				}
 			}
 			return true;
 	}
 
 	private static int getMiddle(ArrayList<Integer> arr) {
-		return arr.get((int)(Math.ceil(arr.size()/2)));
+		return arr.get(Math.ceilDiv(arr.size(), 2));
 	}
 
 	public void part1() {
-		// get hashmap with closer as key and openers as hashset value
-		HashMap<Integer, HashSet<Integer>> printRule = formatRule(data.get(0), true);
-		ArrayList<ArrayList<Integer>> printOrder = formatPrintOrder(data.get(1));
-
 		int middleSum = 0;
 
 		for (ArrayList<Integer> order : printOrder) {
-			if (checkOrder(printRule, order)) {
+			if (checkOrder(order)) {
 				middleSum += getMiddle(order);
 			}
 		}
 
-		System.out.println(String.format("Sum of middle page number of valid order: %d", middleSum));
+		Logger.log("Sum of middle page number of valid order: %d", middleSum);
 	}
 
 	public void part2() {
-		// get hashmap with closer as key and openers as hashset value
-		HashMap<Integer, HashSet<Integer>> printRule = formatRule(data.get(0), true);
-		ArrayList<ArrayList<Integer>> printOrder = formatPrintOrder(data.get(1));
 		ArrayList<ArrayList<Integer>> invalidOrder = new ArrayList<>();
 
 		int middleSum = 0;
 
 
 		for (ArrayList<Integer> order : printOrder) {
-			if (!checkOrder(printRule, order)) {
+			if (!checkOrder(order)) {
 				invalidOrder.add(order);
 			}
 		}
 
 		for (int i = 0; i < invalidOrder.size();) {
 			ArrayList<Integer> order = invalidOrder.get(i);
-			// get closer from hashmap, put the openers in here as blacklist as it will break the rule if read
-			HashSet<Integer> deathSet = new HashSet<>();
-			HashMap<Integer, ArrayList<Integer>> killerMap = new HashMap<>();
-			boolean cont = true;
+
+			// Get closer from hashmap, put the openers in here as blacklist as 
+			// it will break the rule if read
+			HashSet<Integer> invalidPages = new HashSet<>();
+
+			// Stores what page is invalidated by what page's index
+			HashMap<Integer, ArrayList<Integer>> invalidatorMap = new HashMap<>();
+			boolean count = true;
 			
 			for (int j = 0; j < order.size(); j++) {
 				int page = order.get(j);
-				if (deathSet.contains(page)) {
-					int killerIdx = killerMap.get(page).get(killerMap.get(page).size()-1);
-					Collections.swap(order, killerIdx, j);
-					cont = false;
+
+				if (invalidPages.contains(page)) {
+					// If invalid order is found, swap it with the first
+					// invalidator found due to
+					// If A -> C, A -> B Topology: [C, B, A]
+					//
+					// during print rule check invalidators order would be
+					// [C, B], swapping with B (last found invalidator) cause
+					// [C, A, B] but still cause invalid topology due to A -> C
+					//
+					// swapping with C cause
+					// [A, B, C] which turns the topology valid within 1 swap instead of 2
+					int invalidatorIdx = invalidatorMap.get(page).getFirst();
+					Collections.swap(order, invalidatorIdx, j);
+					count = false;
 					break;
 				}
 				if (printRule.containsKey(page)) {
 					HashSet<Integer> openers = printRule.get(page);
 					Iterator<Integer> openersIter = openers.iterator();
-					deathSet.addAll(openers);
+					invalidPages.addAll(openers);
 					while (openersIter.hasNext()) {
 						int target = openersIter.next();
-						killerMap.putIfAbsent(target, new ArrayList<>()); 
-						killerMap.get(target).add(j);
+						invalidatorMap.putIfAbsent(target, new ArrayList<>()); 
+						invalidatorMap.get(target).add(j);
 					}
 				}
 			}
-			if (cont) {
+
+			// Loops until a valid topology is found
+			if (count) {
 				middleSum += getMiddle(order);
 				i++;
 			};
 		}
-		System.out.println(String.format("Sum Of Middle Of Fixed Order: %d", middleSum));	
+		Logger.log("Sum Of Middle Of Fixed Order: %d", middleSum);	
 	}
 }

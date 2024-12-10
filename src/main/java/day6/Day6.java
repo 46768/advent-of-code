@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import dayBase.DayBase;
 import fileReader.FileReader;
+import logger.Logger;
 
 class Common {
 	public static char getChar(ArrayList<String> matrix, int x, int y) {
@@ -15,9 +16,13 @@ class Common {
 
 class Guard {
 	private ArrayList<String> guardMap;
+	// Guard's map's size
 	public int sx, sy;
+	// Guard's position
 	public int x, y;
+	// Direction
 	public int dx = -1, dy = 0;
+	// Temporary Obstacle
 	private int tox, toy;
 	public HashMap<String, HashSet<String>> visited = new HashMap<>();
 
@@ -27,41 +32,46 @@ class Guard {
 		sy = map.get(0).length();
 		tox = tempObstacleX;
 		toy = tempObstacleY;
-		boolean br = false;
+main:
 		for (int i = 0; i < sx; i++) {
 			for (int j = 0; j < sy; j++) {
 				x = i;
 				y = j;
+				// '^' is the guard's initial position
 				if (Common.getChar(map, i, j) == '^') {
-					br = true;
-					break;
+					break main;
 				}
 			}
-			if (br) break;
 		}
 	}
 
-	private boolean positionInbound(int ax, int ay) {
-		if (0 > ax || ax >= sx) return false;
-		if (0 > ay || ay >= sy) return false;
+	private boolean positionInbound(int ix, int iy) {
+		if (0 > ix || ix >= sx) return false;
+		if (0 > iy || iy >= sy) return false;
 		return true;
 	}
 
-	private char getValAtPos(int ax, int ay) {
-		if (!positionInbound(ax, ay)) return '!';	
-		if (ax == tox && ay == toy) return '#';
-		return guardMap.get(ax).charAt(ay);
+	private char getValAtPos(int ix, int iy) {
+		if (!positionInbound(ix, iy)) return '!';	
+		if (ix == tox && iy == toy) return '#';
+		return guardMap.get(ix).charAt(iy);
+	}
+
+	private String formatCoord(int ix, int iy) {
+		return String.format("%d,%d", ix, iy);
 	}
 
 	public boolean walk() {
-		String mapIdx = String.format("%d,%d", x, y);		
+		String mapIdx = formatCoord(x, y);		
+		String direction = formatCoord(dx, dy);
 		visited.putIfAbsent(mapIdx, new HashSet<>());
-		if (visited.get(mapIdx).contains(String.format("%d,%d", dx, dy))) {
+		if (visited.get(mapIdx).contains(direction)) {
 			throw new RuntimeException("Infinite Loop");
 		}
-		visited.get(mapIdx).add(String.format("%d,%d", dx, dy));
+		visited.get(mapIdx).add(direction);
 		char posVal = getValAtPos(x+dx, y+dy);
 		if (posVal == '#') {
+			// Swap variable XOR style
 			dx = dx ^ dy;
 			dy = dx ^ dy;
 			dx = dx ^ dy;
@@ -70,8 +80,6 @@ class Guard {
 			x += dx;
 			y += dy;
 		} else return false;
-		//if (!positionInbound(x, y)) return false;
-
 		return true;
 	}
 }
@@ -80,7 +88,7 @@ public class Day6 extends DayBase<ArrayList<String>> {
 	public Day6(String path) {
 		super(path);
 	}
-	
+
 	protected ArrayList<String> parseInput(String path) {
 		return FileReader.readData(path);
 	}
@@ -88,7 +96,7 @@ public class Day6 extends DayBase<ArrayList<String>> {
 	public void part1() {
 		Guard guard = new Guard(data, -1, -1);
 		while (guard.walk()) {}
-		System.out.println(String.format("Total cell guard visited: %d", guard.visited.size()));
+		Logger.log("Total cell guard visited: %d", guard.visited.size());
 	}
 
 	public void part2() {
@@ -99,6 +107,7 @@ public class Day6 extends DayBase<ArrayList<String>> {
 			int nextY = mainGuard.y+mainGuard.dy;
 			String obstaclePositionString = String.format("%d,%d", nextX, nextY);
 			if (!obstaclePlacementLocation.contains(obstaclePositionString)) {
+				// Run from start
 				Guard childGuard = new Guard(data, nextX, nextY);
 				try {
 					while (childGuard.walk()) {} 
@@ -107,6 +116,6 @@ public class Day6 extends DayBase<ArrayList<String>> {
 				}
 			}
 		}
-		System.out.println(String.format("Total possible obstacle placement: %d", obstaclePlacementLocation.size()));
+		Logger.log("Total possible obstacle placement: %d", obstaclePlacementLocation.size());
 	}
 }

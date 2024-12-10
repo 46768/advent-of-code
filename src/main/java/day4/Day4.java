@@ -20,8 +20,8 @@ public class Day4 extends DayBase<ArrayList<String>> {
 	};
 	private static String xMas = "XMAS";
 
-	private static char getChar(ArrayList<String> matrix, int x, int y) {
-		return matrix.get(x).charAt(y);
+	private char getChar(int x, int y) {
+		return data.get(x).charAt(y);
 	}
 
 	public Day4(String path) {
@@ -50,7 +50,7 @@ public class Day4 extends DayBase<ArrayList<String>> {
 							isXmas = false;
 							break;
 						}
-						if (getChar(data, row, col) != xMas.charAt(k)) {
+						if (getChar(row, col) != xMas.charAt(k)) {
 							isXmas = false;
 							break;
 						};
@@ -63,6 +63,10 @@ public class Day4 extends DayBase<ArrayList<String>> {
 		System.out.println(String.format("XMAS Count: %d", count));
 	}
 
+	private boolean checkPair(char[] pair, char checkChar) {
+		return pair[0] == checkChar && pair[1] == checkChar;
+	}
+
 	public void part2() {
 		int lineCnt = data.size();
 		int strCnt = data.get(0).length();
@@ -71,26 +75,21 @@ public class Day4 extends DayBase<ArrayList<String>> {
 
 		for (int i = 1; i < lineCnt-1; i++) {
 			for (int j = 1; j < strCnt-1; j++) {
-				if (data.get(i).charAt(j) != 'A') continue;
-				char[] pair1 = {getChar(data, i+1, j+1), getChar(data, i-1, j-1)};
-				char[] pair2 = {getChar(data, i+1, j-1), getChar(data, i-1, j+1)};
+				if (getChar(i, j) != 'A') continue;
+				// 0 --------> y
+				// | 1[1] . 2[1]
+				// v .   A   .
+				// x 2[0] . 1[0]
+				char[] pair1 = {getChar(i+1, j+1), getChar(i-1, j-1)};
+				char[] pair2 = {getChar(i+1, j-1), getChar(i-1, j+1)};
 
+				// We dont want X or A in our X-Mas, Only M and S
+				checkPair(pair1, 'X');
+				checkPair(pair2, 'X');
+				checkPair(pair1, 'A');
+				checkPair(pair2, 'A');
 
-				for (int k = 0; i < 2; i++) {
-					if (pair1[k] == 'X') {
-						continue;
-					}
-					if (pair2[k] == 'X') {
-						continue;
-					}
-					if (pair1[k] == 'A') {
-						continue;
-					}
-					if (pair2[k] == 'A') {
-						continue;
-					}
-				}
-
+				// Skip MAM and SAS
 				if (pair1[0] == pair1[1]) {
 					continue;
 				}

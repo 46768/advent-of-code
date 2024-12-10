@@ -14,12 +14,15 @@ public class Day1 extends DayBase<ArrayList<ArrayList<Integer>>> {
 	}
 
 	protected ArrayList<ArrayList<Integer>> parseInput(String path) {
-		ArrayList<String> data = FileReader.readData(path);
+		ArrayList<String> dat = FileReader.readData(path);
 		ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+
+		// Left Side
 		res.add(new ArrayList<>());
+		// Right Side
 		res.add(new ArrayList<>());
-		for (int idx = 0; idx < data.size(); idx++) {
-			String line = data.get(idx);
+		for (int idx = 0; idx < dat.size(); idx++) {
+			String line = dat.get(idx);
 			String[] pairValue = line.split("   ");
 			int leftValue = Integer.parseInt(pairValue[0]);
 			int rightValue = Integer.parseInt(pairValue[1]);
@@ -31,8 +34,13 @@ public class Day1 extends DayBase<ArrayList<ArrayList<Integer>>> {
 
 	public void part1() {
 		int sum = 0;
+		
+		// Sort the arrays so we get the lowest of the 2 arrays to have the same index
+		// and the second lowest and so on
 		Collections.sort(data.get(0));
 		Collections.sort(data.get(1));
+
+		// Sum up the absolute distance between pairs
 		for (int i = 0; i < data.get(0).size(); i++) {
 			int leftVal = data.get(0).get(i);
 			int rightVal = data.get(1).get(i);
@@ -41,32 +49,35 @@ public class Day1 extends DayBase<ArrayList<ArrayList<Integer>>> {
 		System.out.println(String.format("Distance Sum: %d", sum));
 	}
 
-	public void part2() {
-		ArrayList<Integer> dataLeft = data.get(0);
-		ArrayList<HashMap<Integer, Integer>> maps = new ArrayList<>();
-		maps.add(new HashMap<>());
-		maps.add(new HashMap<>());
-		int sum = 0;
-
-		for (int i = 0; i < dataLeft.size(); i++) {
-			for (int j = 0; j < 2; j++) {
-				ArrayList<Integer> line = data.get(j);
-				HashMap<Integer, Integer> map = maps.get(j);
-				int val = line.get(i);
-				if (!map.containsKey(val)) {
-					map.put(val, 1);
-				} else {
-					int stored = map.get(val);
-					map.replace(val, stored+1);
-				}
+	// Put data on index dataIdx of data (0 for left, 1 for right) into a hashmap
+	private void hashMapData(HashMap<Integer, Integer> hashmap, int dataIdx) {
+		for (int i = 0; i < data.get(0).size(); i++) {
+			ArrayList<Integer> line = data.get(dataIdx);
+			int val = line.get(i);
+			if (!hashmap.containsKey(val)) {
+				hashmap.put(val, 1);
+			} else {
+				int stored = hashmap.get(val);
+				hashmap.replace(val, stored+1);
 			}
 		}
+	}
 
-		HashMap<Integer, Integer> leftMap = maps.get(0);
-		HashMap<Integer, Integer> rightMap = maps.get(1);
+	public void part2() {
+		// Hashmap containing values from both side of the data
+		// array value : count
+		HashMap<Integer, Integer> leftMap = new HashMap<>();
+		HashMap<Integer, Integer> rightMap = new HashMap<>();
+
+		hashMapData(leftMap, 0);
+		hashMapData(rightMap, 1);
+
+		int sum = 0;
 		for (int key : leftMap.keySet()) {
-			int rightMatch = rightMap.containsKey(key) ? rightMap.get(key) : 0;
-			sum += key * leftMap.get(key) * rightMatch;
+			// If rightMap dont contains the key that exists in leftMap then skip since it
+			// will be multiplied by 0 anyway
+			if (!rightMap.containsKey(key)) continue;
+			sum += key * leftMap.get(key) * rightMap.get(key);
 		}
 
 		System.out.println(String.format("Similarity Score: %d", sum));

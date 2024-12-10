@@ -1,0 +1,164 @@
+package day10;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.ArrayDeque;
+
+import dayBase.DayBase;
+import fileReader.FileReader;
+import logger.Logger;
+
+class Grid<T> {
+	private int sizeX;
+	private int sizeY;
+	private T outOfBoundVal;
+	private ArrayList<T> data = new ArrayList<>();
+	public Grid(int sx, int sy, T defVal, T oobVal) {
+		sizeX = sx;
+		sizeY = sy;
+		outOfBoundVal = oobVal;
+
+		for (int i = 0; i < sx; i++) {
+			for (int j = 0; j < sx; j++) {
+				data.add(defVal);
+			}
+		}
+	}
+
+	public boolean isInBound(int x, int y) {
+		if (0 > x || x >= sizeX) return false;
+		if (0 > y || y >= sizeY) return false;
+		return true;
+	}
+	public boolean isInBound(Integer[] pos) {
+		if (0 > pos[0] || pos[0] >= sizeX) return false;
+		if (0 > pos[1] || pos[1] >= sizeY) return false;
+		return true;
+	}
+
+	public void setVal(int x, int y, T val) {
+		if (!isInBound(x, y)) throw new IndexOutOfBoundsException("Grid Index Out of bound");
+		data.set(x*sizeX + y, val);
+	}
+	public void setVal(Integer[] pos, T val) {
+		if (!isInBound(pos[0], pos[1])) throw new IndexOutOfBoundsException("Grid Index Out of bound");
+		data.set(pos[0]*sizeX + pos[1], val);
+	}
+
+	public T getVal(int x, int y) {
+		if (!isInBound(x, y)) return outOfBoundVal;
+		return data.get(x*sizeX + y);
+	}
+	public T getVal(Integer[] pos) {
+		if (!isInBound(pos[0], pos[1])) return outOfBoundVal;
+		return data.get(pos[0]*sizeX + pos[1]);
+	}
+
+	public int sizeX() { return this.sizeX; };
+	public int sizeY() { return this.sizeY; };
+}
+
+public class Day10 extends DayBase<Grid<Integer>> {
+	protected HashSet<Integer> trailheads;
+
+	public Day10(String path) {
+		super(path);
+	}
+
+	protected Grid<Integer> parseInput(String path) {
+		ArrayList<String> dat = FileReader.readData(path);
+		HashSet<Integer> trailStart = new HashSet<>();
+
+		Grid<Integer> trailMap = new Grid<>(dat.size(), dat.get(0).length(), -1, -1);
+
+		for (int i = 0; i < trailMap.sizeX(); i++) {
+			String line = dat.get(i);
+			for (int j = 0; j < trailMap.sizeY(); j++) {
+				int height = Integer.parseInt(Character.toString(line.charAt(j)));
+				trailMap.setVal(i, j, height);
+				if (height == 0) {
+					trailStart.add(i*trailMap.sizeX() + j);
+				}
+			}
+		}
+
+		trailheads = trailStart;
+		return trailMap;
+	}
+	
+	private Integer[][] getSurrounding(Integer[] pos) {
+		Integer[][] valRet = {
+			{pos[0]-1, pos[1]},
+			{pos[0], pos[1]+1},
+			{pos[0]+1, pos[1]},
+			{pos[0], pos[1]-1},
+		};
+		return valRet;
+	}
+
+	public void part1() {
+		int res = 0;
+
+		for (Integer trailheadComp : trailheads) {
+			HashSet<Integer> trailEnd = new HashSet<>();
+
+			// BFS
+			ArrayDeque<Integer> pathSearch = new ArrayDeque<>();			
+			HashSet<Integer> visited = new HashSet<>();
+			pathSearch.add(trailheadComp);
+
+			while (!pathSearch.isEmpty()) {
+				Integer popPosComp = pathSearch.pop();
+				Integer[] popPos = {Math.floorDiv(popPosComp, data.sizeX()), popPosComp % data.sizeX()};
+				int posVal = data.getVal(popPos);
+				Integer[][] surroundings = getSurrounding(popPos);
+				visited.add(popPosComp);
+
+				if (data.getVal(popPos) == 9) {
+					trailEnd.add(popPosComp);
+				} else {
+					for (Integer[] pos : surroundings) {
+						Integer posComp = pos[0]*data.sizeX() + pos[1];
+						if (data.isInBound(pos) && ((data.getVal(pos)-posVal) == 1) && !visited.contains(posComp)) {
+							pathSearch.add(posComp);
+						}
+					}
+				}
+			}
+			res += trailEnd.size();
+		}
+		Logger.log("part 1: %d", res);
+	}
+
+	public void part2() {
+		int totalRating = 0;
+
+		for (Integer trailheadComp : trailheads) {
+			// BFS
+			int rating = 0;
+			ArrayDeque<Integer> pathSearch = new ArrayDeque<>();			
+			HashSet<Integer> visited = new HashSet<>();
+			pathSearch.add(trailheadComp);
+			while (!pathSearch.isEmpty()) {
+				Integer popPosComp = pathSearch.pop();
+				Integer[] popPos = {Math.floorDiv(popPosComp, data.sizeX()), popPosComp % data.sizeX()};
+				int posVal = data.getVal(popPos);
+				Integer[][] surroundings = getSurrounding(popPos);
+				visited.add(popPosComp);
+
+				if (data.getVal(popPos) == 9) {
+					rating++;
+				} else {
+					for (Integer[] pos : surroundings) {
+						Integer posComp = pos[0]*data.sizeX() + pos[1];
+						if (data.isInBound(pos) && ((data.getVal(pos)-posVal) == 1) && !visited.contains(posComp)) {
+							pathSearch.add(posComp);
+						}
+					}
+				}
+			}
+			totalRating += rating;
+		}
+		Logger.log("part 2: %d", totalRating);
+	}
+}
