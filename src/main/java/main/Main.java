@@ -10,6 +10,7 @@ import day7.Day7;
 import day8.Day8;
 import day9.Day9;
 import day10.Day10;
+import day11.Day11;
 
 import logger.Logger;
 import input.Input;
@@ -35,5 +36,6 @@ public class Main {
 		new Day8(inputManager.getDay(8)).runDay();
 		new Day9(inputManager.getDay(9)).runDay();
 		new Day10(inputManager.getDay(10)).runDay();
+		new Day11(inputManager.getDay(11)).runDay();
 	}
 }
