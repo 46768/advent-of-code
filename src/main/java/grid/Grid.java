@@ -2,6 +2,8 @@ package grid;
 
 import java.util.ArrayList;
 
+import geomUtil.Coord;
+
 public class Grid<T> {
 	private int sizeX;
 	private int sizeY;
@@ -27,6 +29,11 @@ public class Grid<T> {
 	public boolean isInBound(Integer[] pos) {
 		if (0 > pos[0] || pos[0] >= sizeX) return false;
 		if (0 > pos[1] || pos[1] >= sizeY) return false;
+		return true;
+	}
+	public boolean isInBound(Coord pos) {
+		if (0 > pos.x() || pos.x() >= sizeX) return false;
+		if (0 > pos.y() || pos.y() >= sizeY) return false;
 		return true;
 	}
 
