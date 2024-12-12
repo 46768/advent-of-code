@@ -1,8 +1,10 @@
 package day12;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ArrayDeque;
 import java.util.HashSet;
+import java.util.HashMap;
 
 import logger.Logger;
 import dayBase.DayBase;
@@ -27,7 +29,7 @@ public class Day12 extends DayBase<Grid<Character>> {
 		return field;
 	}
 
-	private ArrayList<Integer> processRegion(Coord position, HashSet<String> visited) {
+	private ArrayList<Integer> processRegion(Coord position, HashSet<Coord> visited) {
 		ArrayList<Integer> res = new ArrayList<>();
 		int area = 0;
 		int perimeter = 0;
@@ -35,35 +37,20 @@ public class Day12 extends DayBase<Grid<Character>> {
 
 		// BFS Search
 		ArrayDeque<Coord> queue = new ArrayDeque<>();
-		HashSet<String> localVisited = new HashSet<String>();
-		HashSet<String> perimeterVisited = new HashSet<String>();
+		HashSet<Coord> localVisited = new HashSet<>();
 		queue.add(position);
 
-main:
 		while (queue.size() > 0) {
-			Logger.log(localVisited);
 			Coord pos = queue.pop();
-			int x = pos.x();
-			int y = pos.y();
-			if (!localVisited.contains(pos.toString())) {
-				area++;
-			}
-			localVisited.add(pos.toString());
+			if (!localVisited.add(pos)) continue;
+			area++;
 			// Get surrounding cell and add if its valid
-			for (boolean isY : new boolean[]{false, true}) {
-				for (int offset : new int[]{-1, 1}) {
-					int nx = !isY ? x+offset : x;
-					int ny = isY ? y+offset : y;
-					Coord nCoord = new Coord(nx, ny);
-					char selectedCell = data.getVal(nx, ny);
-					if (!localVisited.contains(nCoord.toString())) {
-						if (selectedCell == regionChar) {
-							queue.add(nCoord);
-						} else if (!perimeterVisited.contains(nCoord.toString()+pos.toString())) {
-							perimeter++;
-							perimeterVisited.add(nCoord.toString()+pos.toString());
-						}
-					}
+			for (Coord nCoord : pos.getSurroundingCoord(false)) {
+				char selectedCell = data.getVal(nCoord);
+				if (selectedCell == regionChar && !localVisited.contains(nCoord)) {
+					queue.add(nCoord);
+				} else if (selectedCell != regionChar) {
+					perimeter++;
 				}
 			}
 		}
@@ -75,13 +62,36 @@ main:
 
 	public void part1() {
 		int result = 0;
-		HashSet<String> visitedCell = new HashSet<>();
+		HashSet<Coord> visited = new HashSet<>();
 		for (int x = 0; x < data.sizeX(); x++) {
 			for (int y = 0; y < data.sizeY(); y++) {
-				Coord searchCoord = new Coord(x, y);
-				if (!visitedCell.contains(searchCoord.toString())) {
-					ArrayList<Integer> resultRegion = processRegion(searchCoord, visitedCell);
-					result += resultRegion.get(0) * resultRegion.get(1);
+				Coord position = new Coord(x, y);
+				if (!visited.contains(position)) {
+					int area = 0;
+					int perimeter = 0;
+					char regionChar = data.getVal(position.x(), position.y());
+
+					// BFS Search
+					ArrayDeque<Coord> queue = new ArrayDeque<>();
+					HashSet<Coord> localVisited = new HashSet<>();
+					queue.add(position);
+
+					while (queue.size() > 0) {
+						Coord pos = queue.pop();
+						if (!localVisited.add(pos)) continue;
+						area++;
+						// Get surrounding cell and add if its valid
+						for (Coord nCoord : pos.getSurroundingCoord(false)) {
+							char selectedCell = data.getVal(nCoord);
+							if (selectedCell == regionChar && !localVisited.contains(nCoord)) {
+								queue.add(nCoord);
+							} else if (selectedCell != regionChar) {
+								perimeter++;
+							}
+						}
+					}
+					visited.addAll(localVisited);
+					result += area*perimeter;
 				}
 			}
 		}
@@ -89,6 +99,90 @@ main:
 	}
 
 	public void part2() {
+		int result = 0;
+		HashSet<Coord> visited = new HashSet<>();
 
+		for (int x = 0; x < data.sizeX(); x++) {
+			for (int y = 0; y < data.sizeY(); y++) {
+				Coord position = new Coord(x, y);
+				if (!visited.contains(position)) {
+					int area = 0;
+					char regionChar = data.getVal(position.x(), position.y());
+					ArrayList<Coord> verticalEdges = new ArrayList<>();
+					ArrayList<Coord> horizontalEdges = new ArrayList<>();
+
+					// BFS Search
+					ArrayDeque<Coord> queue = new ArrayDeque<>();
+					HashSet<Coord> localVisited = new HashSet<>();
+					queue.add(position);
+
+					while (queue.size() > 0) {
+						// <Border pos, offset from src>
+						Coord pos = queue.pop();
+						if (!localVisited.add(pos)) continue;
+						area++;
+						// Get surrounding cell and add if its valid
+						for (Coord nCoord : pos.getSurroundingCoord(false)) {
+							char selectedCell = data.getVal(nCoord);
+							if (selectedCell == regionChar && !localVisited.contains(nCoord)) {
+								queue.add(nCoord);
+							} else if (selectedCell != regionChar) {
+								Coord offset = Coord.Subtract(nCoord, pos);
+								if (offset.y() == 0) {
+									verticalEdges.add(new Coord(pos.y(), pos.x()*4+offset.x()));
+								} else {
+									horizontalEdges.add(new Coord(pos.x(), pos.y()*4+offset.y()));
+								}
+							}
+						}
+					}
+
+					// Edge Pruning
+					int sides = 0;
+					ArrayList<Coord> debugVertical = new ArrayList<>();
+					ArrayList<Coord> debugHorizontal = new ArrayList<>();
+					for (ArrayList<Coord> edge : List.of(horizontalEdges, verticalEdges)) {
+						while (!edge.isEmpty()) {
+							Coord edgeBase = edge.removeFirst();
+							if (edge.equals(verticalEdges)) {
+								debugVertical.add(edgeBase);
+							} else {
+								debugHorizontal.add(edgeBase);
+							}
+							int targetOrdinal = edgeBase.x()+1;
+							int idx = 0;
+							while (idx < edge.size()) {
+								Coord edgePos = edge.get(idx);
+								if (edgePos.x() == targetOrdinal && edgePos.y() == edgeBase.y()) {
+									edge.remove(idx);
+									targetOrdinal++;
+								} else {
+									idx++;
+								}
+							}
+							targetOrdinal = edgeBase.x()-1;
+							idx = 0;
+							while (idx < edge.size()) {
+								Coord edgePos = edge.get(idx);
+								if (edgePos.x() == targetOrdinal && edgePos.y() == edgeBase.y()) {
+									edge.remove(idx);
+									targetOrdinal--;
+								} else {
+									idx++;
+								}
+							}
+							sides++;
+						}
+
+					}
+					visited.addAll(localVisited);
+					//int edges = verticalEdges.size() + horizontalEdges.size();
+					Logger.log("verticalEdges: %s, horizontalEdges: %s", debugVertical, debugHorizontal);
+					Logger.debug("Region for %c, Area: %d, Edges: %d", data.getVal(position), area, sides);
+					result += area*sides;
+				}
+			}
+		}
+		Logger.log("Total Region Cost with bulk discount: %d", result);
 	}
 }

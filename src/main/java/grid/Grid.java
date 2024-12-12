@@ -54,6 +54,10 @@ public class Grid<T> {
 		if (!isInBound(pos[0], pos[1])) return outOfBoundVal;
 		return data.get(pos[0]*sizeX + pos[1]);
 	}
+	public T getVal(Coord pos) {
+		if (!isInBound(pos.x(), pos.y())) return outOfBoundVal;
+		return data.get(pos.x()*sizeX + pos.y());
+	}
 
 	public int sizeX() { return this.sizeX; };
 	public int sizeY() { return this.sizeY; };
