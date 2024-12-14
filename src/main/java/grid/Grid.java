@@ -5,23 +5,23 @@ import java.util.ArrayList;
 import geomUtil.Coord;
 
 public class Grid<T> {
-	private int sizeX;
-	private int sizeY;
+	private long sizeX;
+	private long sizeY;
 	private T outOfBoundVal;
 	private ArrayList<T> data = new ArrayList<>();
-	public Grid(int sx, int sy, T defVal, T oobVal) {
+	public Grid(long sx, long sy, T defVal, T oobVal) {
 		sizeX = sx;
 		sizeY = sy;
 		outOfBoundVal = oobVal;
 
-		for (int i = 0; i < sx; i++) {
-			for (int j = 0; j < sx; j++) {
+		for (long i = 0; i < sx; i++) {
+			for (long j = 0; j < sx; j++) {
 				data.add(defVal);
 			}
 		}
 	}
 
-	public boolean isInBound(int x, int y) {
+	public boolean isInBound(long x, long y) {
 		if (0 > x || x >= sizeX) return false;
 		if (0 > y || y >= sizeY) return false;
 		return true;
@@ -37,28 +37,28 @@ public class Grid<T> {
 		return true;
 	}
 
-	public void setVal(int x, int y, T val) {
+	public void setVal(long x, long y, T val) {
 		if (!isInBound(x, y)) throw new IndexOutOfBoundsException("Grid Index Out of bound");
-		data.set(x*sizeX + y, val);
+		data.set((int)(x*sizeX + y), val);
 	}
 	public void setVal(Integer[] pos, T val) {
 		if (!isInBound(pos[0], pos[1])) throw new IndexOutOfBoundsException("Grid Index Out of bound");
-		data.set(pos[0]*sizeX + pos[1], val);
+		data.set((int)(pos[0]*sizeX + pos[1]), val);
 	}
 
-	public T getVal(int x, int y) {
+	public T getVal(long x, long y) {
 		if (!isInBound(x, y)) return outOfBoundVal;
-		return data.get(x*sizeX + y);
+		return data.get((int)(x*sizeX + y));
 	}
 	public T getVal(Integer[] pos) {
 		if (!isInBound(pos[0], pos[1])) return outOfBoundVal;
-		return data.get(pos[0]*sizeX + pos[1]);
+		return data.get((int)(pos[0]*sizeX + pos[1]));
 	}
 	public T getVal(Coord pos) {
 		if (!isInBound(pos.x(), pos.y())) return outOfBoundVal;
-		return data.get(pos.x()*sizeX + pos.y());
+		return data.get((int)(pos.x()*sizeX + pos.y()));
 	}
 
-	public int sizeX() { return this.sizeX; };
-	public int sizeY() { return this.sizeY; };
+	public long sizeX() { return this.sizeX; };
+	public long sizeY() { return this.sizeY; };
 }

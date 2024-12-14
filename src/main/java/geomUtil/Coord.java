@@ -4,8 +4,6 @@ import java.util.function.BiFunction;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import logger.Logger;
-
 public class Coord {
 	public static Coord Add(Coord coord1, Coord coord2) {
 		return new Coord(coord1.x()+coord2.x(), coord1.y()+coord2.y());
@@ -20,14 +18,14 @@ public class Coord {
 		return new Coord(coord1.x()/coord2.x(), coord1.y()/coord2.y());
 	}
 
-	private int[] pos;
-	public Coord(int x, int y) {
-		pos = new int[]{x, y};
+	private long[] pos;
+	public Coord(long x, long y) {
+		pos = new long[]{x, y};
 	}
-	public static Coord withX(int x) {
+	public static Coord withX(long x) {
 		return new Coord(x, 0);
 	}
-	public static Coord withY(int y) {
+	public static Coord withY(long y) {
 		return new Coord(0, y);
 	}
 	public static Coord withX(Coord pos) {
@@ -36,17 +34,20 @@ public class Coord {
 	public static Coord withY(Coord pos) {
 		return new Coord(0, pos.y());
 	}
+	public static Coord expand(long ord) {
+		return new Coord(ord, ord);
+	}
 
-	public int x() {
+	public long x() {
 		return pos[0];
 	}
-	public int y() {
+	public long y() {
 		return pos[1];
 	}
 
 	private void applyMethod(BiFunction<Coord, Coord, Coord> fn, Coord coord) {
 		Coord newCoord = fn.apply(this, coord);
-		pos = new int[]{newCoord.x(), newCoord.y()};
+		pos = new long[]{newCoord.x(), newCoord.y()};
 	}
 
 	public Coord add(Coord coord) {
@@ -85,8 +86,8 @@ public class Coord {
 	public ArrayList<Coord> getSurroundingCoord(boolean extendedDirection) {
 		ArrayList<Coord> surroundings = new ArrayList<>();
 		
-		for (int xOff : new int[]{-1, 0, 1}) {
-			for (int yOff : new int[]{-1, 0, 1}) {
+		for (long xOff : new long[]{-1, 0, 1}) {
+			for (long yOff : new long[]{-1, 0, 1}) {
 				if ((xOff*yOff == 0 || extendedDirection) && (xOff != 0 || yOff != 0)) {
 					surroundings.add(Add(this, new Coord(xOff, yOff)));
 				}

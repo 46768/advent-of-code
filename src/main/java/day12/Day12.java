@@ -29,37 +29,6 @@ public class Day12 extends DayBase<Grid<Character>> {
 		return field;
 	}
 
-	private ArrayList<Integer> processRegion(Coord position, HashSet<Coord> visited) {
-		ArrayList<Integer> res = new ArrayList<>();
-		int area = 0;
-		int perimeter = 0;
-		char regionChar = data.getVal(position.x(), position.y());
-
-		// BFS Search
-		ArrayDeque<Coord> queue = new ArrayDeque<>();
-		HashSet<Coord> localVisited = new HashSet<>();
-		queue.add(position);
-
-		while (queue.size() > 0) {
-			Coord pos = queue.pop();
-			if (!localVisited.add(pos)) continue;
-			area++;
-			// Get surrounding cell and add if its valid
-			for (Coord nCoord : pos.getSurroundingCoord(false)) {
-				char selectedCell = data.getVal(nCoord);
-				if (selectedCell == regionChar && !localVisited.contains(nCoord)) {
-					queue.add(nCoord);
-				} else if (selectedCell != regionChar) {
-					perimeter++;
-				}
-			}
-		}
-		visited.addAll(localVisited);
-		res.add(area);
-		res.add(perimeter);
-		return res;
-	}
-
 	public void part1() {
 		int result = 0;
 		HashSet<Coord> visited = new HashSet<>();
@@ -149,7 +118,7 @@ public class Day12 extends DayBase<Grid<Character>> {
 							} else {
 								debugHorizontal.add(edgeBase);
 							}
-							int targetOrdinal = edgeBase.x()+1;
+							long targetOrdinal = edgeBase.x()+1;
 							int idx = 0;
 							while (idx < edge.size()) {
 								Coord edgePos = edge.get(idx);

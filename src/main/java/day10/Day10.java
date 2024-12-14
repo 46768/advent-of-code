@@ -45,7 +45,7 @@ public class Day10 extends DayBase<Grid<Integer>> {
 		return valRet;
 	}
 
-	private int convertPos(Integer[] pos) {
+	private long convertPos(Integer[] pos) {
 		return pos[0]*data.sizeX() + pos[1];
 	}
 
@@ -53,11 +53,11 @@ public class Day10 extends DayBase<Grid<Integer>> {
 		int res = 0;
 
 		for (Integer[] trailhead : trailheads) {
-			HashSet<Integer> trailEnd = new HashSet<>();
+			HashSet<Long> trailEnd = new HashSet<>();
 
 			// BFS
 			ArrayDeque<Integer[]> pathSearch = new ArrayDeque<>();			
-			HashSet<Integer> visited = new HashSet<>();
+			HashSet<Long> visited = new HashSet<>();
 			pathSearch.add(trailhead);
 
 			while (!pathSearch.isEmpty()) {
@@ -70,7 +70,7 @@ public class Day10 extends DayBase<Grid<Integer>> {
 					trailEnd.add(convertPos(popPos));
 				} else {
 					for (Integer[] pos : surroundings) {
-						Integer posComp = pos[0]*data.sizeX() + pos[1];
+						Long posComp = pos[0]*data.sizeX() + pos[1];
 						if (data.isInBound(pos) && ((data.getVal(pos)-posVal) == 1) && !visited.contains(posComp)) {
 							pathSearch.add(pos);
 						}
@@ -89,7 +89,7 @@ public class Day10 extends DayBase<Grid<Integer>> {
 			// BFS
 			int rating = 0;
 			ArrayDeque<Integer[]> pathSearch = new ArrayDeque<>();			
-			HashSet<Integer> visited = new HashSet<>();
+			HashSet<Long> visited = new HashSet<>();
 			pathSearch.add(trailhead);
 			while (!pathSearch.isEmpty()) {
 				Integer[] popPos = pathSearch.pop();
@@ -101,7 +101,7 @@ public class Day10 extends DayBase<Grid<Integer>> {
 					rating++;
 				} else {
 					for (Integer[] pos : surroundings) {
-						Integer posComp = pos[0]*data.sizeX() + pos[1];
+						Long posComp = pos[0]*data.sizeX() + pos[1];
 						if (data.isInBound(pos) && ((data.getVal(pos)-posVal) == 1) && !visited.contains(posComp)) {
 							pathSearch.add(pos);
 						}
