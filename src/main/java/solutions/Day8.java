@@ -1,4 +1,4 @@
-package day8;
+package solutions;
 
 import java.util.ArrayList;
 import java.util.HashMap;

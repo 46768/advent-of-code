@@ -1,4 +1,4 @@
-package day6;
+package solutions;
 
 import java.util.ArrayList;
 import java.util.HashSet;
