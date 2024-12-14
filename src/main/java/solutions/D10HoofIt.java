@@ -9,10 +9,10 @@ import logger.Logger;
 import input.InputData;
 import grid.Grid;
 
-public class Day10 extends DayBase<Grid<Integer>> {
+public class D10HoofIt extends DayBase<Grid<Integer>> {
 	protected HashSet<Integer[]> trailheads;
 
-	public Day10(InputData dat) {
+	public D10HoofIt(InputData dat) {
 		super(dat);
 	}
 

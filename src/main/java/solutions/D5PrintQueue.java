@@ -10,11 +10,11 @@ import dayBase.DayBase;
 import logger.Logger;
 import input.InputData;
 
-public class Day5 extends DayBase<ArrayList<ArrayList<String>>> {
+public class D5PrintQueue extends DayBase<ArrayList<ArrayList<String>>> {
 	private HashMap<Integer, HashSet<Integer>> printRule;
 	private ArrayList<ArrayList<Integer>> printOrder;
 
-	public Day5(InputData dat) {
+	public D5PrintQueue(InputData dat) {
 		super(dat);
 	}
 

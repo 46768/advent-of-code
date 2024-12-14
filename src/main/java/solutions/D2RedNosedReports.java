@@ -6,8 +6,8 @@ import dayBase.DayBase;
 import logger.Logger;
 import input.InputData;
 
-public class Day2 extends DayBase<ArrayList<ArrayList<Integer>>> {
-	public Day2(InputData dat) {
+public class D2RedNosedReports extends DayBase<ArrayList<ArrayList<Integer>>> {
+	public D2RedNosedReports(InputData dat) {
 		super(dat);
 	}
 

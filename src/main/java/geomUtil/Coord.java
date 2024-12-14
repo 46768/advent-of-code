@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Coord {
+	public static final Coord ZERO_COORD = new Coord(0, 0);
+	public static final Coord NEG_IDENTITY_COORD = new Coord(-1, -1);
+
 	public static Coord Add(Coord coord1, Coord coord2) {
 		return new Coord(coord1.x()+coord2.x(), coord1.y()+coord2.y());
 	}
@@ -17,10 +20,15 @@ public class Coord {
 	public static Coord Divide(Coord coord1, Coord coord2) {
 		return new Coord(coord1.x()/coord2.x(), coord1.y()/coord2.y());
 	}
+	public static Coord Swap(Coord coord, Coord empty) {
+		return new Coord(coord.y(), coord.x());
+	}
 
 	private long[] pos;
+	private long[] lastOperation;
 	public Coord(long x, long y) {
 		pos = new long[]{x, y};
+		lastOperation = new long[]{x, y};
 	}
 	public static Coord withX(long x) {
 		return new Coord(x, 0);
@@ -45,25 +53,31 @@ public class Coord {
 		return pos[1];
 	}
 
-	private void applyMethod(BiFunction<Coord, Coord, Coord> fn, Coord coord) {
+	private Coord applyMethod(BiFunction<Coord, Coord, Coord> fn, Coord coord) {
 		Coord newCoord = fn.apply(this, coord);
-		pos = new long[]{newCoord.x(), newCoord.y()};
+		lastOperation = new long[]{newCoord.x(), newCoord.y()};
+		return newCoord;
 	}
 
 	public Coord add(Coord coord) {
-		applyMethod(Coord::Add, coord);
-		return this;
+		return applyMethod(Coord::Add, coord);
 	}
 	public Coord subtract(Coord coord) {
-		applyMethod(Coord::Subtract, coord);
-		return this;
+		return applyMethod(Coord::Subtract, coord);
 	}
 	public Coord multiply(Coord coord) {
-		applyMethod(Coord::Multiply, coord);
-		return this;
+		return applyMethod(Coord::Multiply, coord);
 	}
 	public Coord divide(Coord coord) {
-		applyMethod(Coord::Divide, coord);
+		return applyMethod(Coord::Divide, coord);
+	}
+	public Coord swap() {
+		return applyMethod(Coord::Swap, ZERO_COORD);
+	}
+	// Set positon to lastOperation's result
+	public Coord set() {
+		pos[0] = lastOperation[0];
+		pos[1] = lastOperation[1];
 		return this;
 	}
 
@@ -81,6 +95,10 @@ public class Coord {
 	@Override
 	public int hashCode() {
 		return Objects.hash(x(), y());
+	}
+	@Override
+	public Coord clone() {
+		return new Coord(x(), y());
 	}
 
 	public ArrayList<Coord> getSurroundingCoord(boolean extendedDirection) {

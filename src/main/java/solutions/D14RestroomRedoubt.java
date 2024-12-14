@@ -10,7 +10,7 @@ import input.InputData;
 import dayBase.DayBase;
 import geomUtil.Coord;
 
-public class Day14 extends DayBase<ArrayList<ArrayList<Coord>>> {
+public class D14RestroomRedoubt extends DayBase<ArrayList<ArrayList<Coord>>> {
 	private static final int MAP_WIDTH = 101;
 	private static final int MAP_HEIGHT = 103;
 
@@ -22,7 +22,7 @@ public class Day14 extends DayBase<ArrayList<ArrayList<Coord>>> {
 		NONE
 	}
 
-	public Day14(InputData dat) {
+	public D14RestroomRedoubt(InputData dat) {
 		super(dat);
 	}
 

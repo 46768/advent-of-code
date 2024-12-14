@@ -7,8 +7,8 @@ import logger.Logger;
 import dayBase.DayBase;
 import input.InputData;
 
-public class Day9 extends DayBase<ArrayList<Integer>> {
-	public Day9(InputData dat) {
+public class D9DiskFragmenter extends DayBase<ArrayList<Integer>> {
+	public D9DiskFragmenter(InputData dat) {
 		super(dat);
 	}
 

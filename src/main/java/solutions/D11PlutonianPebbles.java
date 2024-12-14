@@ -8,8 +8,8 @@ import dayBase.DayBase;
 import input.InputData;
 import logger.Logger;
 
-public class Day11 extends DayBase<ArrayList<Long>> {
-	public Day11(InputData dat) {
+public class D11PlutonianPebbles extends DayBase<ArrayList<Long>> {
+	public D11PlutonianPebbles(InputData dat) {
 		super(dat);
 	}
 

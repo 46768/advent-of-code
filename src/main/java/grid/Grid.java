@@ -45,6 +45,10 @@ public class Grid<T> {
 		if (!isInBound(pos[0], pos[1])) throw new IndexOutOfBoundsException("Grid Index Out of bound");
 		data.set((int)(pos[0]*sizeX + pos[1]), val);
 	}
+	public void setVal(Coord pos, T val) {
+		if (!isInBound(pos.x(), pos.y())) throw new IndexOutOfBoundsException("Grid Index Out of bound");
+		data.set((int)(pos.x()*sizeX + pos.y()), val);
+	}
 
 	public T getVal(long x, long y) {
 		if (!isInBound(x, y)) return outOfBoundVal;

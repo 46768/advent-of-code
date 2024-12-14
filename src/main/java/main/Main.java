@@ -16,19 +16,19 @@ public class Main {
 			Logger.log("Using test data");
 		}
 
-		new Day1(inputManager.getDay(1)).runDay();
-		new Day2(inputManager.getDay(2)).runDay();
-		new Day3(inputManager.getDay(3)).runDay();
-		new Day4(inputManager.getDay(4)).runDay();
-		new Day5(inputManager.getDay(5)).runDay();
-		//new Day6(inputManager.getDay(6)).runDay(); // Long running day (~5s)
-		//new Day7(inputManager.getDay(7)).runDay(); // Long running day (~2s)
-		new Day8(inputManager.getDay(8)).runDay();
-		new Day9(inputManager.getDay(9)).runDay();
-		new Day10(inputManager.getDay(10)).runDay();
-		new Day11(inputManager.getDay(11)).runDay();
-		//new Day12(inputManager.getDay(12)).runDay();
-		new Day13(inputManager.getDay(13)).runDay();
-		new Day14(inputManager.getDay(14)).runDay();
+		new D1HistorianHysteria(inputManager.getDay(1)).runDay();
+		new D2RedNosedReports(inputManager.getDay(2)).runDay();
+		new D3MullItOver(inputManager.getDay(3)).runDay();
+		new D4CeresSearch(inputManager.getDay(4)).runDay();
+		new D5PrintQueue(inputManager.getDay(5)).runDay();
+		new D6GuardGallivant(inputManager.getDay(6)).runDay(); // Long running day (~5s)
+		new D7BridgeRepair(inputManager.getDay(7)).runDay();
+		new D8ResonantCollinearity(inputManager.getDay(8)).runDay();
+		new D9DiskFragmenter(inputManager.getDay(9)).runDay();
+		new D10HoofIt(inputManager.getDay(10)).runDay();
+		new D11PlutonianPebbles(inputManager.getDay(11)).runDay();
+		// new D12GardenGroups(inputManager.getDay(12)).runDay(); // Non-working solution
+		new D13ClawContraption(inputManager.getDay(13)).runDay();
+		new D14RestroomRedoubt(inputManager.getDay(14)).runDay();
 	}
 }

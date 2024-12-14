@@ -9,8 +9,8 @@ import input.InputData;
 import geomUtil.Coord;
 import logger.Logger;
 
-public class Day13 extends DayBase<ArrayList<ArrayList<Coord>>> {
-	public Day13(InputData dat) {
+public class D13ClawContraption extends DayBase<ArrayList<ArrayList<Coord>>> {
+	public D13ClawContraption(InputData dat) {
 		super(dat);
 	}
 

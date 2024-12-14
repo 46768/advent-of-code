@@ -11,8 +11,8 @@ import input.InputData;
 import grid.Grid;
 import geomUtil.Coord;
 
-public class Day12 extends DayBase<Grid<Character>> {
-	public Day12(InputData dat) {
+public class D12GardenGroups extends DayBase<Grid<Character>> {
+	public D12GardenGroups(InputData dat) {
 		super(dat);	
 	}
 

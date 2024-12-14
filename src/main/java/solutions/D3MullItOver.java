@@ -8,8 +8,8 @@ import dayBase.DayBase;
 import logger.Logger;
 import input.InputData;
 
-public class Day3 extends DayBase<ArrayList<String>> {
-	public Day3(InputData dat) {
+public class D3MullItOver extends DayBase<ArrayList<String>> {
+	public D3MullItOver(InputData dat) {
 		super(dat);
 	}
 

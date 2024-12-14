@@ -6,7 +6,7 @@ import dayBase.DayBase;
 import logger.Logger;
 import input.InputData;
 
-public class Day4 extends DayBase<ArrayList<String>> {
+public class D4CeresSearch extends DayBase<ArrayList<String>> {
 	private static int[][] searchIterator = {
 	   //x, y
 		{0, 1},
@@ -25,7 +25,7 @@ public class Day4 extends DayBase<ArrayList<String>> {
 		return data.get(x).charAt(y);
 	}
 
-	public Day4(InputData dat) {
+	public D4CeresSearch(InputData dat) {
 		super(dat);
 	}
 

@@ -8,9 +8,9 @@ import dayBase.DayBase;
 import logger.Logger;
 import input.InputData;
 
-public class Day1 extends DayBase<ArrayList<ArrayList<Integer>>> {
+public class D1HistorianHysteria extends DayBase<ArrayList<ArrayList<Integer>>> {
 
-	public Day1(InputData dat) {
+	public D1HistorianHysteria(InputData dat) {
 		super(dat);
 	}
 

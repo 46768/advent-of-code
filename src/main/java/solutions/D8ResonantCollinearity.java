@@ -8,10 +8,10 @@ import dayBase.DayBase;
 import logger.Logger;
 import input.InputData;
 
-public class Day8 extends DayBase<HashMap<Character, ArrayList<Integer>>> {
+public class D8ResonantCollinearity extends DayBase<HashMap<Character, ArrayList<Integer>>> {
 	private int sx;
 	private int sy;
-	public Day8(InputData dat) {
+	public D8ResonantCollinearity(InputData dat) {
 		super(dat);
 	}
 
