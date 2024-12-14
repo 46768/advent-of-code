@@ -2,7 +2,6 @@ package day14;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,11 +13,6 @@ import geomUtil.Coord;
 public class Day14 extends DayBase<ArrayList<ArrayList<Coord>>> {
 	private static final int MAP_WIDTH = 101;
 	private static final int MAP_HEIGHT = 103;
-
-	private static final double STANDARD_VARIANCE = 0.9;
-	private static final double STANDARD_MEAN = 1.2;
-	private static final double NORMAL_DISTRIBUTION_COEFFICIENT = 1/Math.sqrt(2*Math.PI*STANDARD_VARIANCE*STANDARD_VARIANCE);
-	private static final double NORMAL_DISTRIBUTION_EXPONENT_COEFFICIENT = Math.exp(-1/2*STANDARD_VARIANCE*STANDARD_VARIANCE);
 
 	private enum Quadrant {
 		TOP_LEFT,
@@ -87,38 +81,6 @@ public class Day14 extends DayBase<ArrayList<ArrayList<Coord>>> {
 		return Quadrant.NONE;
 	}
 
-	private HashMap<Integer, Double> genDensityMap() {
-		HashMap<Integer, Double> densityMap = new HashMap<>();
-		densityMap.put(1, 0d);
-		densityMap.put(2, 0d);
-		densityMap.put(3, 0d);
-		densityMap.put(4, 0d);
-		densityMap.put(5, 0d);
-		densityMap.put(6, 0d);
-		densityMap.put(7, 0d);
-		densityMap.put(8, 0d);
-		densityMap.put(9, 0d);
-		return densityMap;
-	}
-
-	private double getDensityNormalDistribution(double x) {
-		return NORMAL_DISTRIBUTION_COEFFICIENT * Math.pow(
-				NORMAL_DISTRIBUTION_EXPONENT_COEFFICIENT, 
-				(x - STANDARD_MEAN)*(x - STANDARD_MEAN)
-				);
-	}
-
-	private double getDensityAnomaly(HashMap<Integer, Double> averageDensity, HashMap<Integer, Double> densityMap) {
-		double anomalyScore = 0;
-		for (int key : averageDensity.keySet()) {
-			double avgDensity = averageDensity.get(key);
-			double density = densityMap.get(key);
-			double densityDistribution = getDensityNormalDistribution(key);
-			anomalyScore += densityDistribution * Math.abs(avgDensity - density);
-		}
-		return anomalyScore;
-	}
-
 	public void part1() {
 		long quadTL = 0; // Top left
 		long quadTR = 0; // Top right
@@ -151,12 +113,12 @@ public class Day14 extends DayBase<ArrayList<ArrayList<Coord>>> {
 	}
 
 	public void part2() {
-		HashMap<Integer, Double> averageDensity = genDensityMap();
+		double averageDensity = 0d;
 		int i = 1;
 main:
 		for (;;i++) {
 			HashSet<Coord> robotPos = new HashSet<>();
-			HashMap<Integer, Double> densityMap = genDensityMap();
+			double densityMap = 0d;
 			for (ArrayList<Coord> robot : data) {
 				Coord initPos = robot.get(0);
 				Coord velocity = robot.get(1);
@@ -168,15 +130,10 @@ main:
 				for (Coord surroundingPos : pos.getSurroundingCoord(true)) {
 					if (robotPos.contains(surroundingPos)) density++;
 				}
-				densityMap.replace(density, densityMap.get(density)+1d);
+				if (density == 9) densityMap++;
 			}
-			for (int key : densityMap.keySet()) {
-				double avgDensity = averageDensity.get(key);
-				double density = densityMap.get(key);
-				double newAvgDensity = ((avgDensity*(i-1))+density)/i;
-				averageDensity.replace(key, newAvgDensity);
-			}
-			if (robotPos.size() == data.size() && getDensityAnomaly(averageDensity, densityMap) >= 100) {
+			averageDensity = averageDensity+densityMap;
+			if (densityMap - (averageDensity/i) >= 100) {
 				break main;
 			}
 			if (i > MAP_WIDTH*MAP_HEIGHT) {
