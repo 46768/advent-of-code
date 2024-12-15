@@ -283,7 +283,6 @@ public class D15WarehouseWoes extends DayBase<ArrayList<Warehouse>> {
 			warehouse.inputCommand(cmd);
 		}
 		//warehouse.printCurrentState();
-		Logger.debug(warehouse.getBoxesGPSSum());
 		Logger.log("GPS sum of all big boxes: %d", warehouse.getBoxesGPSSum());
 	}
 }
