@@ -29,6 +29,9 @@ class WarehouseObject {
 	public Coord getPos() {
 		return objPos;
 	}
+	public void setPos(Coord newCoord) {
+		objPos = newCoord;
+	}
 
 	@Override
 	public int hashCode() {
@@ -71,13 +74,7 @@ class WarehouseObject {
 		return this.linkedObject;
 	}
 
-	private void move(Coord direction, HashMap<Coord, WarehouseObject> warehouseObjects) {
-		warehouseObjects.remove(objPos);
-		objPos = objPos.add(direction);
-		warehouseObjects.put(objPos, this);
-	}
-
-	public boolean canActOn(Coord direction, HashMap<Coord, WarehouseObject> warehouseObjects, HashSet<WarehouseObject> visited) {
+	public boolean canMove(Coord direction, HashMap<Coord, WarehouseObject> warehouseObjects, HashSet<WarehouseObject> visited) {
 		// Get all boxes in a row, if hit a wall then cant move, starting from current object
 		for (Coord coord = objPos; warehouseObjects.containsKey(coord); coord = coord.add(direction)) {
 			WarehouseObject obj = warehouseObjects.get(coord);
@@ -85,7 +82,7 @@ class WarehouseObject {
 			visited.add(obj);
 			// if linked isnt from what called this method then recursively search
 			if (linked != null && !visited.contains(linked)) {
-				if (!linked.canActOn(direction, warehouseObjects, visited)) {
+				if (!linked.canMove(direction, warehouseObjects, visited)) {
 					return false;
 				}
 			}
@@ -96,32 +93,12 @@ class WarehouseObject {
 	}
 	// Return true if object moves, false otherwise
 	// If theres an linked object then also act on the object and share the same verdict
-	public boolean actOn(Coord direction, HashMap<Coord, WarehouseObject> warehouseObjects, HashSet<WarehouseObject> moving) {
+	public HashSet<WarehouseObject> getMoving(Coord direction, HashMap<Coord, WarehouseObject> warehouseObjects) {
 		HashSet<WarehouseObject> visited = new HashSet<>();
-		if (canActOn(direction, warehouseObjects, visited)) {
-			ArrayDeque<WarehouseObject> queue = new ArrayDeque<>();
-			HashSet<WarehouseObject> moved = new HashSet<>();
-			for (Coord coord = objPos; warehouseObjects.containsKey(coord); coord = coord.add(direction)) {
-				WarehouseObject obj = warehouseObjects.get(coord);
-				WarehouseObject linked = obj.getLinked();
-				if (!moved.contains(obj)) {
-					queue.add(obj);
-					moved.add(obj);
-					if (linked != null && !moved.contains(linked)) {
-						queue.add(linked);
-						moved.add(linked);
-					}
-				}
-			}
-			Logger.debug(queue);
-			while (!queue.isEmpty()) {
-				WarehouseObject obj = queue.removeLast();
-				obj.move(direction, warehouseObjects);
-			}
-
-			return true;
+		if (canMove(direction, warehouseObjects, visited)) {
+			return visited;
 		}
-		return false;
+		return new HashSet<WarehouseObject>();
 	}
 }
 
@@ -170,6 +147,22 @@ class Warehouse {
 		}
 	}
 
+	private void moveObjects(HashSet<WarehouseObject> objs, Coord dir) {
+		@SuppressWarnings("unchecked")
+		HashMap<Coord, WarehouseObject> objectsClone = 
+		(HashMap<Coord, WarehouseObject>)objects.clone();
+		for (WarehouseObject obj : objs) {
+			objectsClone.remove(obj.getPos());
+		}
+		for (WarehouseObject obj : objs) {
+			Coord newCoord = obj.getPos().add(dir);
+			objectsClone.put(newCoord, obj);
+			obj.setPos(newCoord);
+		}
+
+		objects = objectsClone;
+	}
+
 	public Warehouse(Type warehouseType, ArrayList<String> map) {
 		objects = new HashMap<>();
 		linkedObjects = new HashMap<>();
@@ -200,7 +193,6 @@ class Warehouse {
 	}
 
 	public void inputCommand(char cmd) {
-		HashSet<WarehouseObject> moving = new HashSet<>();
 		Coord direction;
 		if (cmd == '^') {
 			direction = new Coord(-1, 0);
@@ -211,8 +203,8 @@ class Warehouse {
 		} else {
 			direction = new Coord(0, -1);
 		}
-		robot.actOn(direction, objects, moving);
-		printCurrentState();
+		moveObjects(robot.getMoving(direction, objects), direction);
+		//printCurrentState();
 	}
 
 	public void printCurrentState() {
@@ -232,9 +224,10 @@ class Warehouse {
 
 	public long getBoxesGPSSum() {
 		long sum = 0;
+		char boxChar = isBigWarehouse ? '[' : 'O';
 		for (Coord key : objects.keySet()) {
 			WarehouseObject obj = objects.get(key);
-			if (obj.getType() == 'O') {
+			if (obj.getType() == boxChar) {
 				sum += obj.getGPS();
 			}
 		}
@@ -275,21 +268,22 @@ public class D15WarehouseWoes extends DayBase<ArrayList<Warehouse>> {
 
 	public void part1() {
 		Warehouse warehouse = data.get(0);
-		warehouse.printCurrentState();
+		//warehouse.printCurrentState();
 		for (char cmd : commands) {
 			warehouse.inputCommand(cmd);
 		}
-		warehouse.printCurrentState();
+		//warehouse.printCurrentState();
 		Logger.log("GPS sum of all boxes: %d", warehouse.getBoxesGPSSum());
 	}
 
 	public void part2() {
 		Warehouse warehouse = data.get(1);
-		warehouse.printCurrentState();
+		//warehouse.printCurrentState();
 		for (char cmd : commands) {
 			warehouse.inputCommand(cmd);
 		}
-		warehouse.printCurrentState();
+		//warehouse.printCurrentState();
+		Logger.debug(warehouse.getBoxesGPSSum());
 		Logger.log("GPS sum of all big boxes: %d", warehouse.getBoxesGPSSum());
 	}
 }
