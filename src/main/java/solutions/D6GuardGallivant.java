@@ -11,42 +11,35 @@ import grid.Grid;
 import geomUtil.Coord;
 
 class Guard {
-	private Grid<Character> guardMap;
+	private Grid<Long> guardMap;
+	private Grid<Long> guardMapRotated;
 	// Guard's position
 	public Coord position;
-	public Coord positionPrev;
 	// Direction
 	public Coord direction;
-	public Coord directionPrev;
 	public HashMap<Coord, HashSet<Coord>> visited = new HashMap<>();
 
 	public Guard(ArrayList<String> map, Coord tempObstacle, Coord startPos, Coord starDir) {
-		guardMap = new Grid<Character>(map.size(), map.get(0).length(), '.', '!');
+		guardMap = new Grid<Long>(map.size(), map.get(0).length(), 0l, -1l);
+		guardMapRotated = new Grid<Long>(map.get(0).length(), map.size(), 0l, -1l);
 		for (int i = 0; i < guardMap.sizeX(); i++) {
 			for (int j = 0; j < guardMap.sizeY(); j++) {
-				guardMap.setVal(i, j, map.get(i).charAt(j));
 				// '^' is the guard's initial position
 				if (guardMap.getVal(i, j) == '^') {
-					guardMap.setVal(i, j, '.');
 					position = new Coord(i, j);
-					positionPrev = position.clone();
 				}
 			}
 		}
 		direction = new Coord(-1, 0);
-		directionPrev = new Coord(-1, 0);
 		if (!tempObstacle.equals(Coord.NEG_IDENTITY_COORD)) {
-			guardMap.setVal(tempObstacle, '#');
 		}
 
 		if (!startPos.equals(Coord.NEG_IDENTITY_COORD)) {
 			position = startPos;
-			positionPrev = startPos.clone();
 		}
 
 		if (!starDir.equals(Coord.NEG_IDENTITY_COORD)) {
 			direction = starDir;
-			directionPrev = starDir.clone();
 		}
 	}
 
@@ -56,15 +49,6 @@ class Guard {
 			throw new RuntimeException("Infinite Loop");
 		}
 		visited.get(position).add(direction);
-		char posVal = guardMap.getVal(position.add(direction));
-		if (posVal == '#') {
-			directionPrev = direction.clone();
-			direction = direction.swap().set();
-			direction = direction.multiply(new Coord(1, -1)).set();
-		} else if (posVal == '.' || posVal == '^') {
-			positionPrev = position.clone();
-			position = position.add(direction).set();
-		} else return false;
 		return true;
 	}
 }
