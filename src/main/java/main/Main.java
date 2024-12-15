@@ -1,7 +1,6 @@
 package main;
 
 import solutions.*;
-import testClass.*;
 
 import logger.Logger;
 import input.Input;
@@ -32,18 +31,5 @@ public class Main {
 		new D13ClawContraption(inputManager.getDay(13)).runDay();
 		new D14RestroomRedoubt(inputManager.getDay(14)).runDay();
 		new D15WarehouseWoes(inputManager.getDay(15)).runDay();
-		NullProp test = new NullProp();
-		NullProp test2 = new NullProp();
-
-		test.setTest(10);
-		test2.setTest(12);
-		test.link(test2);
-		test2.link(test);
-		Logger.debug(test.getTest());
-		Logger.debug(test.getLink());
-		Logger.debug(test2.getTest());
-		Logger.debug(test2.getLink());
-		Logger.debug(test2.getLink().getLink());
-		
 	}
 }

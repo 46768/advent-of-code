@@ -3,6 +3,7 @@ package solutions;
 import java.util.ArrayList;
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Objects;
 
 import dayBase.DayBase;
@@ -25,6 +26,10 @@ class WarehouseObject {
 		objPos = initPos;
 	}
 
+	public Coord getPos() {
+		return objPos;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(objType, objPos.x(), objPos.y());
@@ -33,12 +38,13 @@ class WarehouseObject {
 	public boolean equals(Object other) {
 		if (this == other) return true;
 		if (other == null || getClass() != other.getClass()) return false;
-		WarehouseObject coordOther = (WarehouseObject) other;
-		return this.getType() == coordOther.getType() && this.hashCode() == coordOther.hashCode();
+		WarehouseObject objOther = (WarehouseObject) other;
+		Coord otherPos = objOther.getPos();
+		return this.getType() == objOther.getType() && objPos.equals(otherPos);
 	}
 	@Override
 	public String toString() {
-		return String.format("%c, %d, %d", getType(), objPos.x(), objPos.y());
+		return String.format("%c,%d,%d", getType(), objPos.x(), objPos.y());
 	}
 
 	public void linkObject(WarehouseObject otherObject) {
@@ -49,8 +55,16 @@ class WarehouseObject {
 		return objPos.x()*100 + objPos.y();
 	}
 	public char getType() {
-		if (objType == Type.Boxes) return 'O';
-		else if (objType == Type.Walls) return '#';
+		if (objType == Type.Boxes) {
+			if (getLinked() != null) {
+				if (objPos.subtract(getLinked().getPos()).equals(Coord.withY(-1))) {
+					return '[';
+				} else {
+					return ']';
+				}
+			}
+			return 'O';
+		} else if (objType == Type.Walls) return '#';
 		return '@';
 	}
 	public WarehouseObject getLinked() {
@@ -63,17 +77,18 @@ class WarehouseObject {
 		warehouseObjects.put(objPos, this);
 	}
 
-	public boolean canActOn(Coord direction, HashMap<Coord, WarehouseObject> warehouseObjects, WarehouseObject src) {
-		if (objType == Type.Walls) {
-			return false;
-		}
-		if (getLinked() != null && !getLinked().equals(src)) {
-			if (!getLinked().canActOn(direction, warehouseObjects, src)) {
-				return false;
-			}
-		}
+	public boolean canActOn(Coord direction, HashMap<Coord, WarehouseObject> warehouseObjects, HashSet<WarehouseObject> visited) {
+		// Get all boxes in a row, if hit a wall then cant move, starting from current object
 		for (Coord coord = objPos; warehouseObjects.containsKey(coord); coord = coord.add(direction)) {
 			WarehouseObject obj = warehouseObjects.get(coord);
+			WarehouseObject linked = obj.getLinked();
+			visited.add(obj);
+			// if linked isnt from what called this method then recursively search
+			if (linked != null && !visited.contains(linked)) {
+				if (!linked.canActOn(direction, warehouseObjects, visited)) {
+					return false;
+				}
+			}
 			if (obj.getType() == '#') return false;
 		}
 
@@ -81,17 +96,24 @@ class WarehouseObject {
 	}
 	// Return true if object moves, false otherwise
 	// If theres an linked object then also act on the object and share the same verdict
-	public boolean actOn(Coord direction, HashMap<Coord, WarehouseObject> warehouseObjects, WarehouseObject src) {
-		if (canActOn(direction, warehouseObjects, this)) {
+	public boolean actOn(Coord direction, HashMap<Coord, WarehouseObject> warehouseObjects, HashSet<WarehouseObject> moving) {
+		HashSet<WarehouseObject> visited = new HashSet<>();
+		if (canActOn(direction, warehouseObjects, visited)) {
 			ArrayDeque<WarehouseObject> queue = new ArrayDeque<>();
+			HashSet<WarehouseObject> moved = new HashSet<>();
 			for (Coord coord = objPos; warehouseObjects.containsKey(coord); coord = coord.add(direction)) {
 				WarehouseObject obj = warehouseObjects.get(coord);
-				queue.add(obj);
+				WarehouseObject linked = obj.getLinked();
+				if (!moved.contains(obj)) {
+					queue.add(obj);
+					moved.add(obj);
+					if (linked != null && !moved.contains(linked)) {
+						queue.add(linked);
+						moved.add(linked);
+					}
+				}
 			}
-			Logger.debug(getLinked());
-			if (getLinked() != null) {
-				queue.add(getLinked());
-			}
+			Logger.debug(queue);
 			while (!queue.isEmpty()) {
 				WarehouseObject obj = queue.removeLast();
 				obj.move(direction, warehouseObjects);
@@ -124,13 +146,14 @@ class ObjectFactory {
 }
 
 class Warehouse {
-	HashMap<Coord, WarehouseObject> objects;
-	int sizeX;
-	int sizeY;
-	boolean isBigWarehouse;
-	ObjectFactory boxFactory;
-	ObjectFactory wallFactory;
-	WarehouseObject robot;
+	private HashMap<Coord, WarehouseObject> objects;
+	private HashMap<WarehouseObject, WarehouseObject> linkedObjects;
+	private int sizeX;
+	private int sizeY;
+	private boolean isBigWarehouse;
+	private ObjectFactory boxFactory;
+	private ObjectFactory wallFactory;
+	private WarehouseObject robot;
 
 	public enum Type {
 		Normal,
@@ -138,14 +161,18 @@ class Warehouse {
 	}
 
 	private void putObject(WarehouseObject obj, Coord coord) {
+		WarehouseObject linked = obj.getLinked();
 		objects.put(coord, obj);
-		if (obj.getLinked() != null) {
-			objects.put(coord.add(Coord.withY(1)), obj.getLinked());
+		if (linked != null) {
+			objects.put(coord.add(Coord.withY(1)), linked);
+			linkedObjects.put(obj, linked);
+			linkedObjects.put(linked, obj);
 		}
 	}
 
 	public Warehouse(Type warehouseType, ArrayList<String> map) {
 		objects = new HashMap<>();
+		linkedObjects = new HashMap<>();
 		isBigWarehouse = warehouseType == Type.Big;
 		boxFactory = new ObjectFactory(WarehouseObject.Type.Boxes, isBigWarehouse);
 		wallFactory = new ObjectFactory(WarehouseObject.Type.Walls, isBigWarehouse);
@@ -160,6 +187,7 @@ class Warehouse {
 				char objType = map.get(x).charAt(y);
 				if (objType == '@') {
 					robot = new WarehouseObject(WarehouseObject.Type.Robot, coord);
+					putObject(robot, coord);
 				} else if (objType == 'O') {
 					WarehouseObject box = boxFactory.createObject(coord);
 					putObject(box, coord);
@@ -170,26 +198,61 @@ class Warehouse {
 			}
 		}
 	}
+
+	public void inputCommand(char cmd) {
+		HashSet<WarehouseObject> moving = new HashSet<>();
+		Coord direction;
+		if (cmd == '^') {
+			direction = new Coord(-1, 0);
+		} else if (cmd == '>') {
+			direction = new Coord(0, 1);
+		} else if (cmd == 'v') {
+			direction = new Coord(1, 0);
+		} else {
+			direction = new Coord(0, -1);
+		}
+		robot.actOn(direction, objects, moving);
+		printCurrentState();
+	}
+
+	public void printCurrentState() {
+		int yScale = isBigWarehouse ? 2 : 1;
+		for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY*yScale; y++) {
+				Coord coord = new Coord(x, y);
+				if (objects.containsKey(coord)) {
+					Logger.print(objects.get(coord).getType());
+				} else {
+					Logger.print('.');
+				}
+			}
+			Logger.print('\n');
+		}
+	}
+
+	public long getBoxesGPSSum() {
+		long sum = 0;
+		for (Coord key : objects.keySet()) {
+			WarehouseObject obj = objects.get(key);
+			if (obj.getType() == 'O') {
+				sum += obj.getGPS();
+			}
+		}
+		return sum;
+	}
 }
 
-public class D15WarehouseWoes extends DayBase<HashMap<Coord, WarehouseObject>> {
-	int sizeX;
-	int sizeY;
-	int sizeBX;
-	int sizeBY;
-	HashMap<Coord, WarehouseObject> bigData;
+public class D15WarehouseWoes extends DayBase<ArrayList<Warehouse>> {
 	ArrayList<Character> commands;
-	WarehouseObject robot;
-	WarehouseObject robotBig;
 
 	public D15WarehouseWoes(InputData dat) {
 		super(dat);
 	}
 
-	protected HashMap<Coord, WarehouseObject> parseInput(ArrayList<String> dat) {
-		bigData = new HashMap<>();
+	protected ArrayList<Warehouse> parseInput(ArrayList<String> dat) {
 		commands = new ArrayList<>();
 		ArrayList<String> map = new ArrayList<>();
+		ArrayList<Warehouse> warehouses = new ArrayList<>();
 		boolean isMapSection = true;
 		for (String line : dat) {
 			if (line.equals("")) {
@@ -203,111 +266,30 @@ public class D15WarehouseWoes extends DayBase<HashMap<Coord, WarehouseObject>> {
 				}
 			}
 		}
-		sizeX = map.size();
-		sizeY = map.get(0).length();
-		sizeBX = sizeX;
-		sizeBY = sizeY*2;
-		HashMap<Coord, WarehouseObject> objects = new HashMap<>();
 
-		for (int x = 0; x < sizeX; x++) {
-			for (int y = 0; y < sizeY; y++) {
-				char warehouseObj = map.get(x).charAt(y);
-				Coord coord = new Coord(x, y);
-				Coord coordBig = new Coord(x, y*2);
-				if (warehouseObj == '@') {
-					objects.put(coord, new WarehouseObject(WarehouseObject.Type.Robot, coord));
-					bigData.put(coordBig, new WarehouseObject(WarehouseObject.Type.Robot, coordBig));
-				} else if (warehouseObj == 'O') {
-					Logger.debug("putting boxes");
-					objects.put(coord, new WarehouseObject(WarehouseObject.Type.Boxes, coord));
-					WarehouseObject boxLeft = new WarehouseObject(WarehouseObject.Type.Boxes, coordBig);
-					WarehouseObject boxRight = new WarehouseObject(WarehouseObject.Type.Boxes, coordBig.add(Coord.withY(1)));
-					Logger.debug("Linking %s with %s", boxLeft, boxRight);
-					boxLeft.linkObject(boxRight);
-					Logger.debug("Linked %s with %s", boxLeft, boxLeft.getLinked());
-					Logger.debug("Linking %s with %s", boxRight, boxLeft);
-					boxRight.linkObject(boxLeft);
-					Logger.debug("Linked %s with %s", boxRight, boxRight.getLinked());
-					bigData.put(coordBig, boxLeft);
-					bigData.put(coordBig.add(Coord.withY(1)), boxRight);
-				} else if (warehouseObj == '#') {
-					objects.put(coord, new WarehouseObject(WarehouseObject.Type.Walls, coord));
-					bigData.put(coordBig, new WarehouseObject(WarehouseObject.Type.Walls, coordBig));
-					bigData.put(coordBig.add(Coord.withY(1)), new WarehouseObject(WarehouseObject.Type.Walls, coordBig.add(Coord.withY(1))));
-				}
-				if (warehouseObj == '@') {
-					robot = objects.get(coord);
-					robotBig = bigData.get(coordBig);
-				}
-			}
-		}
+		warehouses.add(new Warehouse(Warehouse.Type.Normal, map));
+		warehouses.add(new Warehouse(Warehouse.Type.Big, map));
 
-		return objects;
-	}
-
-	private void printCurrentState(HashMap<Coord, WarehouseObject> state, int sx, int sy) {
-		for (int x = 0; x < sx; x++) {
-			for (int y = 0; y < sy; y++) {
-				Coord coord = new Coord(x, y);
-				if (state.containsKey(coord)) {
-					Logger.print(state.get(coord).getType());
-				} else {
-					Logger.print('.');
-				}
-			}
-			Logger.print('\n');
-		}
+		return warehouses;
 	}
 
 	public void part1() {
-		long gpsSum = 0;
-		//printCurrentState(data, sizeX, sizeY);
+		Warehouse warehouse = data.get(0);
+		warehouse.printCurrentState();
 		for (char cmd : commands) {
-			if (cmd == '^') {
-				robot.actOn(new Coord(-1, 0), data, robot);
-			} else if (cmd == '>') {
-				robot.actOn(new Coord(0, 1), data, robot);
-			} else if (cmd == 'v') {
-				robot.actOn(new Coord(1, 0), data, robot);
-			} else if (cmd == '<') {
-				robot.actOn(new Coord(0, -1), data, robot);
-			}
-			//Logger.debug(cmd);
-			//printCurrentState(data, sizeX, sizeY);
+			warehouse.inputCommand(cmd);
 		}
-		for (Coord key : data.keySet()) {
-			WarehouseObject obj = data.get(key);
-			if (obj.getType() == 'O') {
-				gpsSum += obj.getGPS();
-			}
-		}
-		//printCurrentState(data, sizeX, sizeY);
-		Logger.log("GPS sum of all boxes: %d", gpsSum);
+		warehouse.printCurrentState();
+		Logger.log("GPS sum of all boxes: %d", warehouse.getBoxesGPSSum());
 	}
 
 	public void part2() {
-		long gpsSum = 0;
-		//printCurrentState(bigData, sizeBX, sizeBY);
+		Warehouse warehouse = data.get(1);
+		warehouse.printCurrentState();
 		for (char cmd : commands) {
-			if (cmd == '^') {
-				robotBig.actOn(new Coord(-1, 0), bigData, robotBig);
-			} else if (cmd == '>') {
-				robotBig.actOn(new Coord(0, 1), bigData, robotBig);
-			} else if (cmd == 'v') {
-				robotBig.actOn(new Coord(1, 0), bigData, robotBig);
-			} else if (cmd == '<') {
-				robotBig.actOn(new Coord(0, -1), bigData, robotBig);
-			}
-			//Logger.debug(cmd);
-			//printCurrentState(bigData, sizeBX, sizeBY);
+			warehouse.inputCommand(cmd);
 		}
-		/*for (Coord key : bigData.keySet()) {
-			WarehouseObject obj = bigData.get(key);
-			if (obj.getType() == 'O') {
-				gpsSum += obj.getGPS();
-			}
-		}*/
-		//printCurrentState(bigData, sizeBX, sizeBY);
-		Logger.log("GPS sum of all boxes: %d", gpsSum);
+		warehouse.printCurrentState();
+		Logger.log("GPS sum of all big boxes: %d", warehouse.getBoxesGPSSum());
 	}
 }
