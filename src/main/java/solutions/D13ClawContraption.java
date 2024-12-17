@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import logger.Logger;
 import dayBase.DayBase;
 import input.InputData;
+
 import geomUtil.Coord;
-import logger.Logger;
 
 public class D13ClawContraption extends DayBase<ArrayList<ArrayList<Coord>>> {
 	public D13ClawContraption(InputData dat) {

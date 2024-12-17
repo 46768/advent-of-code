@@ -31,5 +31,6 @@ public class Main {
 		new D13ClawContraption(inputManager.getDay(13)).runDay();
 		new D14RestroomRedoubt(inputManager.getDay(14)).runDay();
 		new D15WarehouseWoes(inputManager.getDay(15)).runDay();
+		new D17ChronospatialComputer(inputManager.getDay(17)).runDay();
 	}
 }
