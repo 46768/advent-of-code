@@ -3,6 +3,7 @@ package grid;
 import java.util.ArrayList;
 
 import geomUtil.Coord;
+import logger.Logger;
 
 public class Grid<T> {
 	private long sizeX;
@@ -21,6 +22,16 @@ public class Grid<T> {
 		}
 	}
 
+	public void printCurrentState() {
+		for (int x = 0; x < sizeX; x++) {
+			for (int y = 0; y < sizeY; y++) {
+				Coord coord = new Coord(x, y);
+				Logger.print(getVal(coord));
+			}
+			Logger.print('\n');
+		}
+	}
+
 	public boolean isInBound(long x, long y) {
 		if (0 > x || x >= sizeX) return false;
 		if (0 > y || y >= sizeY) return false;
@@ -35,6 +46,13 @@ public class Grid<T> {
 		if (0 > pos.x() || pos.x() >= sizeX) return false;
 		if (0 > pos.y() || pos.y() >= sizeY) return false;
 		return true;
+	}
+	
+	public long compressCoord(Coord pos) {
+		return pos.x()*sizeX + pos.y();
+	}
+	public Coord decompressCoord(long comp) {
+		return new Coord(comp/sizeX, comp%sizeX);
 	}
 
 	public void setVal(long x, long y, T val) {
