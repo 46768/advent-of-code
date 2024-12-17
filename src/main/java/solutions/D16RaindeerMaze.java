@@ -65,15 +65,11 @@ class AStar {
 public class D16RaindeerMaze extends DayBase<Grid<Character>> {
 	private Coord startPos;
 	private Coord endPos;
->>>>>>> bbeaa98 (Day 16 AStar)
 	public D16RaindeerMaze(InputData dat) {
 		super(dat);
 	}
 
 	protected Grid<Character> parseInput(ArrayList<String> dat) {
-<<<<<<< HEAD
-		return new Grid<Character>(1, 1, '.', '!');		
-=======
 		int sizeX = dat.size();
 		int sizeY = dat.get(0).length();
 		Grid<Character> map = new Grid<>(sizeX, sizeY, '.', '!');
@@ -93,7 +89,6 @@ public class D16RaindeerMaze extends DayBase<Grid<Character>> {
 		Logger.debug(startPos);
 		Logger.debug(endPos);
 		return map;
->>>>>>> bbeaa98 (Day 16 AStar)
 	}
 
 	public void part1() {}

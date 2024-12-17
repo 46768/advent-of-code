@@ -1,57 +1,35 @@
 package solutions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import input.InputData;
 import logger.Logger;
 import dayBase.DayBase;
 
-public class D17ChronospatialComputer extends DayBase<ArrayList<Integer>> {
-	private int regA;
-	private int regB;
-	private int regC;
-	private int instPtr;
-	private ArrayList<Integer> stdout;
-	public D17ChronospatialComputer(InputData dat) {
-		super(dat);
-	}
-
-	protected ArrayList<Integer> parseInput(ArrayList<String> dat) {
+class Computer {
+	private long regA;
+	private long regB;
+	private long regC;
+	private long regAInit;
+	private long regBInit;
+	private long regCInit;
+	private long instPtr;
+	private ArrayList<Long> stdout;
+	private ArrayList<Long> program;
+	public Computer(ArrayList<Long> program, long initA, long initB, long initC) {
+		this.program = program;
+		stdout = new ArrayList<>();
+		regAInit = initA;
+		regBInit = initB;
+		regCInit = initC;
+		regA = initA;
+		regB = initB;
+		regC = initC;
 		instPtr = 0;
-		ArrayList<Integer> instMem = new ArrayList<Integer>();
-		stdout = new ArrayList<Integer>();
-		boolean isInst = false;
-
-		for (String line : dat) {
-			if (isInst) {
-				Logger.log(line.substring(9));
-				for (String inst : line.substring(9).split(",")) {
-					instMem.add(Integer.parseInt(inst));
-				}
-			} else {
-				if (line.equals("")) {
-					isInst = true;
-					continue;
-				}
-				String regData = line.substring(9);
-				if (regData.charAt(0) == 'A') {
-					regA = Integer.parseInt(regData.substring(3));
-				} else if (regData.charAt(0) == 'B') {
-					regB = Integer.parseInt(regData.substring(3));
-				} else {
-					regC = Integer.parseInt(regData.substring(3));
-				}
-			}
-		}
-
-		Logger.log(regA);
-		Logger.log(regB);
-		Logger.log(regC);
-		Logger.log(instMem);
-		return instMem;
 	}
 
-	private int resolveComboOperand(int operand) {
+	private long resolveComboOperand(long operand) {
 		if (operand <= 3) return operand;
 		if (operand == 4) return regA;
 		if (operand == 5) return regB;
@@ -59,7 +37,7 @@ public class D17ChronospatialComputer extends DayBase<ArrayList<Integer>> {
 		return -1;
 	}
 
-	private void runOpcode(int opcode, int operand) {
+	private void runOpcode(long opcode, long operand) {
 		if (0 > operand && operand > 7) {
 			Logger.error("Invalid operand range, range 0-7, got %d", operand);
 			return;
@@ -73,8 +51,10 @@ public class D17ChronospatialComputer extends DayBase<ArrayList<Integer>> {
 		// 5 - print combo operand % 8
 		// 6 - same as '0' but write to B 
 		// 7 - same as '0' but write to C
-		Logger.debug("running opcode %d with %d", opcode, operand);
-		switch (opcode) {
+		//Logger.debug("running opcode %d with %d", opcode, operand);
+		//Logger.debug("State: A %d B %d C %d", regA, regB, regC);
+		//Logger.debug("stdout: %s", stdout);
+		switch ((int)opcode) {
 			case 0:
 				regA /= 1 << resolveComboOperand(operand);
 				break;
@@ -85,8 +65,8 @@ public class D17ChronospatialComputer extends DayBase<ArrayList<Integer>> {
 				regB = resolveComboOperand(operand) % 8;
 				break;
 			case 3:
-				Logger.debug(regA);
-				if (regA != 0) instPtr = operand;
+				//Logger.debug(regA);
+				if (regA != 0) instPtr = operand-2;
 				break;
 			case 4:
 				regB ^= regC;
@@ -95,28 +75,106 @@ public class D17ChronospatialComputer extends DayBase<ArrayList<Integer>> {
 				stdout.add(resolveComboOperand(operand) % 8);
 				break;
 			case 6:
-				regB = regA / 1 << resolveComboOperand(operand);
+				regB = regA / (1 << resolveComboOperand(operand));
 				break;
 			case 7:
-				regC = regA / 1 << resolveComboOperand(operand);
+				regC = regA / (1 << resolveComboOperand(operand));
 				break;
 			default:
 				Logger.error("Invalid Opcode %d", opcode);
 				break;
 		}
+		//Logger.debug("State: A %d B %d C %d", regA, regB, regC);
+		//Logger.debug("stdout: %s", stdout);
+	}
+
+	public String runProgram() {
+		for (;instPtr < program.size(); instPtr += 2) {
+			long opcode = program.get((int)instPtr);
+			long operand = program.get((int)instPtr+1);
+			runOpcode(opcode, operand);
+		}
+		return stdout
+			.toString()
+			.replace(" ", "")
+			.replace("[", "")
+			.replace("]", "");
+	}
+
+	public long reverseEnginnerStdout(ArrayList<Long> stdOut) {
+		ArrayList<Long> possibleInput = new ArrayList<>();
+		ArrayList<Long> reversedStdOut = new ArrayList<>(stdOut);
+		ArrayList<Long> possibleInputCurrent = new ArrayList<>();
+		Collections.reverse(reversedStdOut);
+
+		possibleInput.add(0l);
+		for (long out : reversedStdOut) {
+			while (possibleInput.size() > 0) {
+				possibleInputCurrent.add(possibleInput.getFirst());
+				possibleInput.removeFirst();
+			}
+			for (long inpt : possibleInputCurrent) {
+				for (int test = 0; test < 8; test++) {
+					long testRegA = (inpt<<3)|test;
+					Computer testComputer = new Computer(program, testRegA, regBInit, regCInit);
+					String stdOutTest = testComputer.runProgram();
+					long firstOut = Long.parseLong(stdOutTest.split(",")[0]);
+					if (firstOut == out) possibleInput.add(testRegA);
+				}
+			}
+			possibleInputCurrent.clear();
+		}
+
+
+		Collections.sort(possibleInput);
+
+		return possibleInput.get(0);
+	}
+}
+
+public class D17ChronospatialComputer extends DayBase<ArrayList<Long>> {
+	private long regA;
+	private long regB;
+	private long regC;
+	public D17ChronospatialComputer(InputData dat) {
+		super(dat);
+	}
+
+	protected ArrayList<Long> parseInput(ArrayList<String> dat) {
+		ArrayList<Long> instMem = new ArrayList<Long>();
+		boolean isInst = false;
+
+		for (String line : dat) {
+			if (isInst) {
+				Logger.log(line.substring(9));
+				for (String inst : line.substring(9).split(",")) {
+					instMem.add(Long.parseLong(inst));
+				}
+			} else {
+				if (line.equals("")) {
+					isInst = true;
+					continue;
+				}
+				String regData = line.substring(9);
+				if (regData.charAt(0) == 'A') {
+					regA = Long.parseLong(regData.substring(3));
+				} else if (regData.charAt(0) == 'B') {
+					regB = Long.parseLong(regData.substring(3));
+				} else {
+					regC = Long.parseLong(regData.substring(3));
+				}
+			}
+		}
+
+		return instMem;
 	}
 
 	public void part1() {
-		for (;instPtr < data.size(); instPtr += 2) {
-			int opcode = data.get(instPtr);
-			int operand = data.get(instPtr+1);
-			runOpcode(opcode, operand);
-		}
-		Logger.log("Stdout: %s", 
-				stdout
-				.toString()
-				.replaceAll("\\ \\[\\]", "")
-		);
+		Computer normalComputer = new Computer(data, regA, regB, regC);
+		Logger.log("Stdout: %s", normalComputer.runProgram());
 	}
-	public void part2() {}
+	public void part2() {
+		Computer normalComputer = new Computer(data, regA, regB, regC);
+		Logger.log("Reversed engineered regA: %d", normalComputer.reverseEnginnerStdout(data));
+	}
 }
