@@ -12,3 +12,7 @@ data/
 .project
 jdt.ls-java-project/
 .metadata/
+
+# Intellij
+.idea
+*.iml
