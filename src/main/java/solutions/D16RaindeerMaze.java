@@ -1,11 +1,13 @@
 package solutions;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Comparator;
 import java.util.Collections;
+import java.util.Stack;
 
 import logger.Logger;
 import dayBase.DayBase;
@@ -13,76 +15,66 @@ import input.InputData;
 import grid.Grid;
 import geomUtil.Coord;
 
-interface HeuristicInterface {
-	public double run(Coord c1, Coord c2);
-}
-
-class AStar {
-	private HeuristicInterface h;
+class Dijkstra {
 	private int penalty;
 	private Grid<Character> map;
-	public AStar(HeuristicInterface heuristic, int turnPenalty, Grid<Character> map) {
-		h = heuristic;
+	public Dijkstra(int turnPenalty, Grid<Character> map) {
 		penalty = turnPenalty;
 		this.map = map;
 	}
 
-	public ArrayList<Coord> pathfind(Coord start, Coord end) {
-		// AStar variables
-		HashMap<Coord, Coord> coordSrc = new HashMap<>();
-		HashMap<Coord, Long> gCost = new HashMap<>();
-
+	public HashMap<Coord, ArrayList<Coord>> pathfind(Coord start, Coord end) {
+		// Dijkstra variables
+		HashMap<Coord, ArrayList<Coord>> coordSrc = new HashMap<>();
+		HashMap<List<Double>, Long> stateLowestScore = new HashMap<>();
 		HashSet<Coord> visited = new HashSet<>();
-		PriorityQueue<Double[]> queue = new PriorityQueue<>(new Comparator<Double[]>() {
+		PriorityQueue<List<Double>> queue = new PriorityQueue<>(new Comparator<List<Double>>() {
 			@Override
-			public int compare(Double[] o1, Double[] o2) {
+			public int compare(List<Double> o1, List<Double> o2) {
 				// Min Heap for fCost (first index)
-				return Double.compare(o1[0], o2[0]);
+				return Double.compare(o1.get(0), o2.get(0));
 			}
 		});
 
 		// Initialization
-		coordSrc.put(start, start);
-		gCost.put(start, 0l);
-		queue.add(new Double[]{h.run(start, end), (double)map.compressCoord(start), (double)map.compressCoord(Coord.withY(1))});
+		queue.add(List.of(
+			0d,
+			(double)map.compressCoord(start),
+			(double)map.compressCoord(Coord.withY(1))
+		));
 
 		while (queue.size() > 0) {
-			Double[] queueElement = queue.remove();
-			Coord elementCoord = map.decompressCoord((long)(double)queueElement[1]);
-			Coord direction = map.decompressCoord((long)(double)queueElement[2]);
-			Long currentGCost = gCost.get(elementCoord);
+			// Variable destructuring
+			List<Double> queueElement = queue.remove();
+			Coord elementCoord = map.decompressCoord((long)(double)queueElement.get(1));
+			Coord direction = map.decompressCoord((long)(double)queueElement.get(2));
+
 			visited.add(elementCoord);
-			if (elementCoord.equals(end)) break;
+			//if (elementCoord.equals(end)) break;
 
 			for (Coord neighbor : elementCoord.getSurroundingCoord(false)) {
 				if (map.getVal(neighbor) == '.') {
 					Coord facingDirection = neighbor.subtract(elementCoord);
 					Coord directionProduct = direction.multiply(facingDirection);
-					Long neighborGCost = ((directionProduct.x() + directionProduct.y()) == 0 ? 1+penalty : 1)+currentGCost;
-
-					if (neighborGCost < gCost.getOrDefault(neighbor, Long.MAX_VALUE) && !visited.contains(neighbor)) {
-						coordSrc.put(neighbor, elementCoord);
-						gCost.put(neighbor, neighborGCost);
-						queue.add(new Double[]{
-							(double)neighborGCost+h.run(neighbor, end),
-							(double)map.compressCoord(neighbor),
-							(double)map.compressCoord(facingDirection)
-						});
-					}
 				} else if (map.getVal(neighbor) == 'E') {
-					coordSrc.put(neighbor, elementCoord);
+					coordSrc.putIfAbsent(neighbor, new ArrayList<>());
+					coordSrc.get(neighbor).add(elementCoord);
 					queue.clear();
 					break;
 				}
 			}
 		}
 
-		// Build the array of coord used to take from start to end
+		Logger.debug(coordSrc);
+		return coordSrc;
+	}
+
+	public ArrayList<Coord> buildPath(HashMap<Coord, ArrayList<Coord>> coordSrc, Coord start, Coord end) {
 		ArrayList<Coord> returnArray = new ArrayList<>();
 		Coord currentCoord = end;
 		while (!currentCoord.equals(start)) {
 			returnArray.add(currentCoord);
-			currentCoord = coordSrc.get(currentCoord);
+			currentCoord = coordSrc.get(currentCoord).getLast();
 		}
 		returnArray.add(start);
 		Collections.reverse(returnArray);
@@ -144,23 +136,13 @@ public class D16RaindeerMaze extends DayBase<Grid<Character>> {
 	public void part1() {
 		int turnCost = 1000;
 		AStar searcher = new AStar((s, e) -> heuristic(s, e, turnCost), turnCost, data);
-		ArrayList<Coord> path = searcher.pathfind(startPos, endPos);
+		ArrayList<Coord> path = searcher.buildPath(searcher.pathfind(startPos, endPos), startPos, endPos);
 		
-		// debug
-		for (int x = 0; x < data.sizeX(); x++) {
-			for (int y = 0; y < data.sizeY(); y++) {
-				Coord coord = new Coord(x, y);
-				if (path.contains(coord)) {
-					Logger.print('O');
-				} else {
-					Logger.print(data.getVal(coord));
-				}
-			}
-			Logger.print('\n');
-		}
-
 		// Score calculation
 		Logger.log("Score for map: %d", calculateScore(path));
 	}
-	public void part2() {}
+	
+
+	public void part2() {
+	}
 }
