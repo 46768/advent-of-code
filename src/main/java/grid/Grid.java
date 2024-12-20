@@ -6,6 +6,12 @@ import geomUtil.Coord;
 import logger.Logger;
 
 public class Grid<T> {
+	public static boolean withinBound(long sizeX, long sizeY, Coord pos) {
+		if (0 > pos.x() || pos.x() >= sizeX) return false;
+		if (0 > pos.y() || pos.y() >= sizeY) return false;
+		return true;
+	}
+
 	private long sizeX;
 	private long sizeY;
 	private T outOfBoundVal;
