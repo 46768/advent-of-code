@@ -210,27 +210,7 @@ public class D18RAMRun extends DayBase<ArrayList<Coord>> {
 			if (bottomLeft.contains(byteCoord) && topRight.contains(byteCoord)) {
 				break;
 			}
-			Logger.debug("At : %d", byteIndex);
 		}
-		for (int x = 0; x < sizeX; x++) {
-			for (int y = 0; y < sizeY; y++) {
-				Coord coord = new Coord(x, y);
-				if (bottomLeft.contains(coord) && topRight.contains(coord)) {
-					Logger.print('!');
-				} else if (bottomLeft.contains(coord)) {
-					Logger.print('B');
-				} else if (topRight.contains(coord)) {
-					Logger.print('T');
-				} else if (unsorted.contains(coord)) {
-					Logger.print('U');
-				} else {
-					Logger.print('.');
-				}
-			}
-			Logger.print('\n');
-		}
-		Logger.print('\n');
-
 		Logger.log("Coord that cause path to be unreachable: %s", data.get(byteIndex));
 	}
 }
