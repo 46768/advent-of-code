@@ -18,68 +18,107 @@ import geomUtil.Coord;
 class Dijkstra {
 	private int penalty;
 	private Grid<Character> map;
+
+	private long lowestScoreRecent;
+	private HashMap<List<Long>, ArrayList<List<Long>>> recentCoordSrc;
+	private HashSet<List<Long>> recentEndStates;
 	public Dijkstra(int turnPenalty, Grid<Character> map) {
 		penalty = turnPenalty;
 		this.map = map;
 	}
 
-	public HashMap<Coord, ArrayList<Coord>> pathfind(Coord start, Coord end) {
+	public void pathfind(Coord start, Coord end) {
 		// Dijkstra variables
-		HashMap<Coord, ArrayList<Coord>> coordSrc = new HashMap<>();
-		HashMap<List<Double>, Long> stateLowestScore = new HashMap<>();
-		HashSet<Coord> visited = new HashSet<>();
-		PriorityQueue<List<Double>> queue = new PriorityQueue<>(new Comparator<List<Double>>() {
+		HashMap<List<Long>, ArrayList<List<Long>>> coordSrc = new HashMap<>();
+		HashMap<List<Long>, Long> stateLowestScore = new HashMap<>();
+		HashSet<List<Long>> endStates = new HashSet<>();
+		long lowestScoreToEnd = Long.MAX_VALUE;
+		PriorityQueue<List<Long>> queue = new PriorityQueue<>(new Comparator<List<Long>>() {
 			@Override
-			public int compare(List<Double> o1, List<Double> o2) {
+			public int compare(List<Long> o1, List<Long> o2) {
 				// Min Heap for fCost (first index)
-				return Double.compare(o1.get(0), o2.get(0));
+				return Long.compare(o1.get(0), o2.get(0));
 			}
 		});
 
 		// Initialization
-		queue.add(List.of(
-			0d,
-			(double)map.compressCoord(start),
-			(double)map.compressCoord(Coord.withY(1))
-		));
+		List<Long> initState = List.of(
+			0l, // score
+			map.compressCoord(start), // coordinate
+			map.compressCoord(Coord.withY(1)) // direction
+		);
+		stateLowestScore.put(initState, 0l);
+		queue.add(initState);
 
 		while (queue.size() > 0) {
 			// Variable destructuring
-			List<Double> queueElement = queue.remove();
-			Coord elementCoord = map.decompressCoord((long)(double)queueElement.get(1));
-			Coord direction = map.decompressCoord((long)(double)queueElement.get(2));
+			List<Long> currentState = queue.remove();
+			Long currentScore = currentState.get(0);
+			Coord currentCoord = map.decompressCoord(currentState.get(1));
+			Coord direction = map.decompressCoord(currentState.get(2));
+			//Logger.debug("Current state: %s", currentState);
+			for (int x = 0; x < map.sizeX(); x++) {
+				for (int y = 0; y < map.sizeY(); y++) {
+					Coord coord = new Coord(x, y);
+					if (coord.equals(currentCoord)) {
+						Logger.print('X');
+					} else {
+						Logger.print(map.getVal(coord));
+					}
+				}
+				Logger.print('\n');
+			}
+			Logger.debug(queue);
+			Logger.print('\n');
 
-			visited.add(elementCoord);
-			//if (elementCoord.equals(end)) break;
+			if (currentScore > stateLowestScore.getOrDefault(currentState, Long.MAX_VALUE)) {
+				continue;
+			}
 
-			for (Coord neighbor : elementCoord.getSurroundingCoord(false)) {
+			if (currentCoord.equals(end)) {
+				if (currentScore > lowestScoreToEnd) break;
+				lowestScoreToEnd = currentScore;
+				endStates.add(currentState);
+			}
+
+			for (Coord neighbor : currentCoord.getSurroundingCoord(false)) {
 				if (map.getVal(neighbor) == '.') {
-					Coord facingDirection = neighbor.subtract(elementCoord);
+					Coord facingDirection = neighbor.subtract(currentCoord);
 					Coord directionProduct = direction.multiply(facingDirection);
-				} else if (map.getVal(neighbor) == 'E') {
-					coordSrc.putIfAbsent(neighbor, new ArrayList<>());
-					coordSrc.get(neighbor).add(elementCoord);
-					queue.clear();
-					break;
+					boolean isRightAngle = directionProduct.x()+directionProduct.y() == 0;
+
+					long neighborScore = currentScore + (isRightAngle ? 1+penalty : 1);
+					List<Long> neighborState = List.of(
+							neighborScore,
+							map.compressCoord(neighbor),
+							map.compressCoord(facingDirection)
+							);
+					if (neighborScore <= stateLowestScore.getOrDefault(
+								neighborState,
+								Long.MAX_VALUE)) {
+						stateLowestScore.put(neighborState, neighborScore);
+						coordSrc.putIfAbsent(neighborState, new ArrayList<>());
+						coordSrc.get(neighborState).add(currentState);
+						queue.add(neighborState);
+					}
 				}
 			}
+			//Logger.debug("Queue: %s", queue);
 		}
 
-		Logger.debug(coordSrc);
-		return coordSrc;
+		lowestScoreRecent = lowestScoreToEnd;
+		recentCoordSrc = coordSrc;
+		recentEndStates = endStates;
 	}
-
-	public ArrayList<Coord> buildPath(HashMap<Coord, ArrayList<Coord>> coordSrc, Coord start, Coord end) {
-		ArrayList<Coord> returnArray = new ArrayList<>();
-		Coord currentCoord = end;
-		while (!currentCoord.equals(start)) {
-			returnArray.add(currentCoord);
-			currentCoord = coordSrc.get(currentCoord).getLast();
-		}
-		returnArray.add(start);
-		Collections.reverse(returnArray);
-
-		return returnArray;
+	
+	public long getRecentLowestScoreToEnd() {
+		return lowestScoreRecent;
+	}
+	public HashMap<List<Long>, ArrayList<List<Long>>> getRecentCoordSrc() {
+		return recentCoordSrc;
+	}
+	public HashSet<List<Long>> getRecentEndStates() {
+		return recentEndStates;
 	}
 }
 
@@ -109,37 +148,12 @@ public class D16RaindeerMaze extends DayBase<Grid<Character>> {
 		return map;
 	}
 
-	private double heuristic(Coord start, Coord end, int cost) {
-		long diffX = start.x()-end.x();
-		long diffY = start.y()-end.y();
-		double dist = Math.sqrt(diffX*diffX + diffY*diffY);
-		return cost*(diffY/dist) + dist - (cost/100)*(diffX/dist);
-	}
-
-	private long calculateScore(ArrayList<Coord> path) {
-		long score = 0;
-		Coord direction = new Coord(0, 1);
-		for (int i = 0; i < path.size()-1; i++) {
-			Coord current = path.get(i);
-			Coord next = path.get(i+1);
-			Coord dir = next.subtract(current);
-			if (!direction.equals(dir)) {
-				direction = dir;
-				score += 1001;
-			} else {
-				score += 1;
-			}
-		}
-		return score;
-	}
-
 	public void part1() {
-		int turnCost = 1000;
-		AStar searcher = new AStar((s, e) -> heuristic(s, e, turnCost), turnCost, data);
-		ArrayList<Coord> path = searcher.buildPath(searcher.pathfind(startPos, endPos), startPos, endPos);
+		Dijkstra searcher = new Dijkstra(1000, data);
+		searcher.pathfind(startPos, endPos);
 		
 		// Score calculation
-		Logger.log("Score for map: %d", calculateScore(path));
+		Logger.log("Score for map: %d", searcher.getRecentLowestScoreToEnd());
 	}
 	
 
