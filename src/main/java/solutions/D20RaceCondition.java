@@ -66,6 +66,7 @@ public class D20RaceCondition extends DayBase<HashMap<Coord, Long>> {
 	}
 
 	private long getValidCheatWithOffsetArray(Coord[] offsetArray) {
+		HashMap<Coord, ArrayList<Coord>> cheatRecord = new HashMap<>();
 		long validCheatCount = 0;
 		for (Coord key : data.keySet()) {
 			long keyDist = data.get(key);
@@ -76,6 +77,8 @@ public class D20RaceCondition extends DayBase<HashMap<Coord, Long>> {
 				long cheatDist = Math.abs(offset.x()+offset.y());
 				if (offsetDist != Long.MAX_VALUE && isWall == Long.MAX_VALUE) {
 					long timeSaved = offsetDist-(keyDist+cheatDist);
+					cheatRecord.putIfAbsent(key, new ArrayList<>());
+					cheatRecord.get(key).add(offset);
 					// change 100 to change threshold
 					if (timeSaved >= 100) validCheatCount++;
 				}
