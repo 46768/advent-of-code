@@ -1,4 +1,4 @@
-/*package solutions;
+package solutions;
 
 import java.util.*;
 
@@ -9,7 +9,7 @@ import geomUtil.*;
 
 public class D21KeypadConundrum extends DayBase<ArrayList<String>> {
 	HashMap<Integer, HashMap<Integer, String>> memonizedKeypad;
-	HashMap<Integer, HashMap<Integer, HashMap<Integer, String>>> memonizedController;
+	HashMap<Integer, HashMap<Integer, String>> memonizedController;
 	HashMap<Character, Integer> keypadMap;
 	HashMap<Character, Integer> controllerMap;
 	public D21KeypadConundrum(InputData dat) {
@@ -92,7 +92,7 @@ public class D21KeypadConundrum extends DayBase<ArrayList<String>> {
 	// Controller structure:
 	//   ^ A
 	// < v >
-	private HashMap<Integer, HashMap<Integer, HashMap<Integer, String>>> generateShortestPathForController() {
+	private HashMap<Integer, HashMap<Integer, String>> generateShortestPathForController() {
 		Coord[] keyPos = new Coord[]{
 			new Coord(0, 1), // ^
 			new Coord(1, 0), // <
@@ -106,11 +106,28 @@ public class D21KeypadConundrum extends DayBase<ArrayList<String>> {
 
 	private String parseMovement(String moveSeq) {
 		String returnSeq = "";
+		HashMap<Character, Integer> movementBlock = new HashMap<>();
 		int previousState = 4;
+
+		// General optimization rule
+		// ^, v should come before <
+		// > should come before v
 		for (int i = 0; i < moveSeq.length(); i++) {
-			int targetState = controllerMap.get(moveSeq.charAt(i));
-			//returnSeq = returnSeq.concat(memonizedController.get(previousState).get(targetState));
-			previousState = targetState;
+			// Get movement block (movement - A)
+			char charAtSeq = moveSeq.charAt(i);
+			movementBlock.put(charAtSeq, movementBlock.getOrDefault(charAtSeq, 0)+1);
+			if (charAtSeq == 'A') {
+				// block optimization
+				String movement = "";
+
+
+				// Command building
+				for (int j = 0; j < movement.length(); j++) {
+					int targetState = controllerMap.get(movement.charAt(j));
+					returnSeq = returnSeq.concat(memonizedController.get(previousState).get(targetState));
+					previousState = targetState;
+				}
+			}
 		}
 
 		return returnSeq;
@@ -129,7 +146,9 @@ public class D21KeypadConundrum extends DayBase<ArrayList<String>> {
 			
 			for (int i = 0; i < code.length(); i++) {
 				int codeIdx = keypadMap.get(code.charAt(i));
+				// Most optimal path for keypad is direct path from shortest path generation
 				String keypadRobotSeq = memonizedKeypad.get(keypadRobotState).get(codeIdx); // required by dpRobotSeq
+
 				String depressurizedRobotSeq = parseMovement(keypadRobotSeq); // required by radRobotSeq
 				String radiationRobotSeq = parseMovement(depressurizedRobotSeq); // required by frozenBotSeq
 				
@@ -149,4 +168,4 @@ public class D21KeypadConundrum extends DayBase<ArrayList<String>> {
 		Logger.log("Complexity Score: %d", complexityScore);
 	}
 	public void part2() {}
-}*/
+}
