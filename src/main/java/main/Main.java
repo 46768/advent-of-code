@@ -36,6 +36,7 @@ public class Main {
 		new D18RAMRun(inputManager.getDay(18)).runDay();
 		new D19LinenLayout(inputManager.getDay(19)).runDay();
 		new D20RaceCondition(inputManager.getDay(20)).runDay();
-		new D21KeypadConundrum(inputManager.getDay(21)).runDay();
+		//new D21KeypadConundrum(inputManager.getDay(21)).runDay();
+		new D22MonkeyMarket(inputManager.getDay(22)).runDay();
 	}
 }

@@ -1,4 +1,4 @@
-package solutions;
+/*package solutions;
 
 import java.util.*;
 
@@ -109,7 +109,7 @@ public class D21KeypadConundrum extends DayBase<ArrayList<String>> {
 		int previousState = 4;
 		for (int i = 0; i < moveSeq.length(); i++) {
 			int targetState = controllerMap.get(moveSeq.charAt(i));
-			returnSeq = returnSeq.concat(memonizedController.get(previousState).get(targetState));
+			//returnSeq = returnSeq.concat(memonizedController.get(previousState).get(targetState));
 			previousState = targetState;
 		}
 
@@ -149,4 +149,4 @@ public class D21KeypadConundrum extends DayBase<ArrayList<String>> {
 		Logger.log("Complexity Score: %d", complexityScore);
 	}
 	public void part2() {}
-}
+}*/
