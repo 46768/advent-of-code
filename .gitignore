@@ -1,6 +1,7 @@
 # Java compiled
 *.class
 target/
+docs/
 
 # AOC Puzzle input
 data/

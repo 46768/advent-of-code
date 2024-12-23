@@ -17,60 +17,53 @@ public class D1HistorianHysteria extends DayBase<ArrayList<ArrayList<Integer>>> 
 	protected ArrayList<ArrayList<Integer>> parseInput(ArrayList<String> dat) {
 		ArrayList<ArrayList<Integer>> res = new ArrayList<>();
 
-		// Left Side
-		res.add(new ArrayList<>());
-		// Right Side
-		res.add(new ArrayList<>());
-		for (int idx = 0; idx < dat.size(); idx++) {
-			String line = dat.get(idx);
-			String[] pairValue = line.split("   ");
-			int leftValue = Integer.parseInt(pairValue[0]);
-			int rightValue = Integer.parseInt(pairValue[1]);
-			res.get(0).add(leftValue);
-			res.get(1).add(rightValue);
+		for (int i : new int[]{0, 1}) {
+			res.add(new ArrayList<>());
+			for (int idx = 0; idx < dat.size(); idx++) {
+				String line = dat.get(idx);
+				String[] pairValue = line.split("   ");
+				int value = Integer.parseInt(pairValue[i]);
+				res.get(i).add(value);
+			}
 		}
 		return res;
 	}
 
 	public void part1() {
 		int sum = 0;
+		ArrayList<Integer> leftList = data.get(0);
+		ArrayList<Integer> rightList = data.get(1);
 		
 		// Sort the arrays so we get the lowest of the 2 arrays to have the same index
 		// and the second lowest and so on
-		Collections.sort(data.get(0));
-		Collections.sort(data.get(1));
+		Collections.sort(leftList);
+		Collections.sort(rightList);
 
 		// Sum up the absolute distance between pairs
-		for (int i = 0; i < data.get(0).size(); i++) {
-			int leftVal = data.get(0).get(i);
-			int rightVal = data.get(1).get(i);
+		for (int i = 0; i < leftList.size(); i++) {
+			int leftVal = leftList.get(i);
+			int rightVal = rightList.get(i);
 			sum += Math.abs(leftVal - rightVal);
 		}
 		Logger.log("Distance Sum: %d", sum);
 	}
 
 	// Put data on index dataIdx of data (0 for left, 1 for right) into a hashmap
-	private void hashMapData(HashMap<Integer, Integer> hashmap, int dataIdx) {
-		for (int i = 0; i < data.get(0).size(); i++) {
-			ArrayList<Integer> line = data.get(dataIdx);
+	private HashMap<Integer, Integer> hashMapData(int dataIdx) {
+		HashMap<Integer, Integer> hashmap = new HashMap<>();
+		ArrayList<Integer> line = data.get(dataIdx);
+		for (int i = 0; i < line.size(); i++) {
 			int val = line.get(i);
-			if (!hashmap.containsKey(val)) {
-				hashmap.put(val, 1);
-			} else {
-				int stored = hashmap.get(val);
-				hashmap.replace(val, stored+1);
-			}
+			hashmap.put(val, hashmap.getOrDefault(val, 0)+1);
 		}
+		return hashmap;
 	}
 
 	public void part2() {
 		// Hashmap containing values from both side of the data
 		// array value : count
-		HashMap<Integer, Integer> leftMap = new HashMap<>();
-		HashMap<Integer, Integer> rightMap = new HashMap<>();
-
-		hashMapData(leftMap, 0);
-		hashMapData(rightMap, 1);
+		HashMap<Integer, Integer> leftMap = hashMapData(0);
+		HashMap<Integer, Integer> rightMap = hashMapData(1);
 
 		int sum = 0;
 		for (int key : leftMap.keySet()) {

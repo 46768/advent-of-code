@@ -2,6 +2,9 @@ package logger;
 
 import java.util.Arrays;
 
+/**
+ * Logger utility class //TODO: Implement log files
+ */
 public class Logger {
 	public static final String[] TIME_UNIT = {
 		"ns",
@@ -25,10 +28,22 @@ public class Logger {
 	private static final String ERROR = "["+formatColor("ERROR", ANSI_RED)+"] ";
 	private static final String DEBUG = "["+formatColor("DEBUG", ANSI_PURPLE)+"] ";
 
+	/**
+	 * Format the text to a ANSI color
+	 *
+	 * @param str Text to format
+	 * @param col Color to format to, Must be ANSI color
+	 */
 	public static String formatColor(String str, String col) {
 		return String.format("%s%s%s", col, str, ANSI_RESET);
 	}
 
+	/**
+	 * The base for logging with levels of log
+	 *
+	 * @param level The prefix of a log
+	 * @param varargs Arguments for logging
+	 */
 	private static void logBase(String level, Object... varargs) {
 		if (varargs[0] instanceof String) {
 			System.out.print(level);
@@ -39,31 +54,64 @@ public class Logger {
 		}
 	}
 
+	/**
+	 * Raw printing to System.out
+	 *
+	 * @param obj Object to print to System.out
+	 */
 	public static void print(Object obj) {
 		System.out.print(obj);
 	}
 
+	/**
+	 * Print new line to System.out
+	 */
 	public static void newline() {
 		System.out.println();
 	}
 
+	/**
+	 * Log information to System.out
+	 *
+	 * @param obj Objects to log
+	 */
 	public static void log(Object... obj) {
 		logBase(INFO, obj);
 	}
 
+	/**
+	 * Warns information to System.out
+	 *
+	 * @param obj Objects to log
+	 */
 	public static void warn(Object... obj) {
 		logBase(WARN, obj);
 	}
 
+	/**
+	 * Errors to System.out, not fatal
+	 *
+	 * @param obj Objects to log
+	 */
 	public static void error(Object... obj) {
 		logBase(ERROR, obj);
 	}
 
+	/**
+	 * Log debug information to System.out
+	 *
+	 * @param obj Objects to log
+	 */
 	public static void debug(Object... obj) {
 		logBase(DEBUG, obj);
 	}
 
-
+	/**
+	 * Format time from nanoseconds to be more readable
+	 *
+	 * @param nano Time in nanoseconds
+	 * @return The time formatted to time unit that is most readable
+	 */
 	public static String formatTimeFromNanos(long nano) {
 		double time = nano;
 		int unitIdx = 0;

@@ -5,6 +5,18 @@ import solutions.*;
 import logger.Logger;
 import input.Input;
 
+/**
+ * <pre>
+ * Main entry point for all solutions, Current day: 23
+ * example use case:
+ *     
+ *     java /path/to/jar.jar [Options]
+ *
+ *  Options:
+ *      fetch - fetch input from advent of code's server (Not yet implemented)
+ *      test - use test data directory
+ *  </pre>
+ */
 public class Main {
 	public static void main(String[] arg) {
 		Input inputManager = new Input("/main", "/test", "day%d.txt");

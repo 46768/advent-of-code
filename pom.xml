@@ -110,6 +110,18 @@
 			</configuration>
 		</plugin>
 
+		<!-- maven javadoc plugin -->
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-javadoc-plugin</artifactId>
+			<version>3.11.2</version>
+			<configuration>
+				<outputDirectory>${project.basedir}/docs/</outputDirectory>
+				<release>23</release>
+				<sourcepath>${project.basedir}/src/</sourcepath>
+			</configuration>
+		</plugin>
+
 		<!-- execution plugin -->
 		<plugin>
 			<groupId>org.codehaus.mojo</groupId>
