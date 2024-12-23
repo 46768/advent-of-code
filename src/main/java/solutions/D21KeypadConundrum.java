@@ -110,15 +110,22 @@ public class D21KeypadConundrum extends DayBase<ArrayList<String>> {
 		int previousState = 4;
 
 		// General optimization rule
+		// ^ should come before v
 		// ^, v should come before <
 		// > should come before v
+		// basically put >, ^, v, <, A
 		for (int i = 0; i < moveSeq.length(); i++) {
 			// Get movement block (movement - A)
 			char charAtSeq = moveSeq.charAt(i);
 			movementBlock.put(charAtSeq, movementBlock.getOrDefault(charAtSeq, 0)+1);
 			if (charAtSeq == 'A') {
 				// block optimization
-				String movement = "";
+				int upPress = movementBlock.getOrDefault('^', 0);
+				int downPress = movementBlock.getOrDefault('v', 0);
+				int leftPress = movementBlock.getOrDefault('<', 0);
+				int rightPress = movementBlock.getOrDefault('>', 0);
+				String movement = "<".repeat(leftPress) + "^".repeat(upPress)
+					+ "v".repeat(downPress) + ">".repeat(rightPress) + "A";
 
 
 				// Command building

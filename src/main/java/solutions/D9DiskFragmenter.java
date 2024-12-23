@@ -61,7 +61,7 @@ public class D9DiskFragmenter extends DayBase<ArrayList<Integer>> {
 			}
 			ptr1Idx++;
 		}
-		Logger.log("Part 1: %d", getChecksum(dataClone));
+		Logger.log("Disk defraggeed (no file integrity check) checksum: %d", getChecksum(dataClone));
 	}
 
 	public void part2() {
@@ -112,6 +112,6 @@ public class D9DiskFragmenter extends DayBase<ArrayList<Integer>> {
 			ptr1Idx = 0;
 
 		}
-		Logger.log("Part 2: %d", getChecksum(dataClone));
+		Logger.log("Disk defragged (with file integrity check) checksum: %d", getChecksum(dataClone));
 	}
 }

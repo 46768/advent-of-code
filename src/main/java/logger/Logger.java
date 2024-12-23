@@ -43,6 +43,10 @@ public class Logger {
 		System.out.print(obj);
 	}
 
+	public static void newline() {
+		System.out.println();
+	}
+
 	public static void log(Object... obj) {
 		logBase(INFO, obj);
 	}

@@ -79,7 +79,7 @@ public class D10HoofIt extends DayBase<Grid<Integer>> {
 			}
 			res += trailEnd.size();
 		}
-		Logger.log("part 1: %d", res);
+		Logger.log("Trail total size: %d", res);
 	}
 
 	public void part2() {
@@ -110,6 +110,6 @@ public class D10HoofIt extends DayBase<Grid<Integer>> {
 			}
 			totalRating += rating;
 		}
-		Logger.log("part 2: %d", totalRating);
+		Logger.log("Trail rating: %d", totalRating);
 	}
 }

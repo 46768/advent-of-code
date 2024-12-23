@@ -38,5 +38,6 @@ public class Main {
 		new D20RaceCondition(inputManager.getDay(20)).runDay();
 		//new D21KeypadConundrum(inputManager.getDay(21)).runDay();
 		new D22MonkeyMarket(inputManager.getDay(22)).runDay();
+		new D23LANParty(inputManager.getDay(23)).runDay();
 	}
 }

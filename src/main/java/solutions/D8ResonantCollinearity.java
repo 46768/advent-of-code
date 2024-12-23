@@ -68,7 +68,7 @@ public class D8ResonantCollinearity extends DayBase<HashMap<Character, ArrayList
 				}
 			}
 		}
-		Logger.log("Part 1: %d", antinodes.size());
+		Logger.log("Antinodes count: %d", antinodes.size());
 	}
 
 	private void repeatAntinode(HashSet<Integer> antinodes, int[] antPos, int[] offset) {
@@ -105,6 +105,6 @@ public class D8ResonantCollinearity extends DayBase<HashMap<Character, ArrayList
 				}
 			}
 		}
-		Logger.log("Part 2: %d", antinodes.size());
+		Logger.log("Repeating anitnodes count: %d", antinodes.size());
 	}
 }

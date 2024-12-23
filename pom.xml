@@ -6,12 +6,58 @@
 <version>1.0</version>
 <properties>
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+	<!-- graalvm native image -->
+	<native.maven.plugin.version>0.10.4</native.maven.plugin.version>
+	<maven.compiler.source>${java.specification.version}</maven.compiler.source>
+	<maven.compiler.target>${java.specification.version}</maven.compiler.target>
+	<imageName>aoc2024</imageName>
+	<mainClass>main.Main</mainClass>
 </properties>
+
+<profiles>
+	<profile>
+		<id>native</id>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.graalvm.buildtools</groupId>
+					<artifactId>native-maven-plugin</artifactId>
+					<version>${native.maven.plugin.version}</version>
+					<executions>
+						<execution>
+							<id>build-native</id>
+							<goals>
+								<goal>compile-no-fork</goal>
+							</goals>
+							<phase>package</phase>
+						</execution>
+						<execution>
+							<id>test-native</id>
+							<goals>
+								<goal>test</goal>
+							</goals>
+							<phase>test</phase>
+						</execution>
+					</executions>
+					<configuration>
+						<fallback>false</fallback>
+						<agent>
+							<enabled>true</enabled>
+						</agent>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
+	</profile>
+</profiles>
+
 <build>
 	<sourceDirectory>${project.basedir}/src/</sourceDirectory>
 	<testSourceDirectory>${project.basedir}/test/</testSourceDirectory>
 
 	<plugins>
+		<!-- jar manifest plugin -->
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-jar-plugin</artifactId>
@@ -19,18 +65,106 @@
 			<configuration>
 				<archive>
 					<manifest>
+						<addClasspath>true</addClasspath>
 						<mainClass>main.Main</mainClass>
 					</manifest>
 				</archive>
 			</configuration>
 		</plugin>
+
+		<!-- compiler target plugin -->
 		<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-compiler-plugin</artifactId>
 			<version>3.13.0</version>
 			<configuration>
+				<source>${maven.compiler.source}</source>
+				<target>${project.basedir}/target/</target>
 				<release>23</release>
 			</configuration>
+		</plugin>
+
+		<!-- maven assembly plugin -->
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-assembly-plugin</artifactId>
+			<version>3.7.1</version>
+			<executions>
+				<execution>
+					<phase>package</phase>
+					<goals>
+						<goal>single</goal>
+					</goals>
+				</execution>
+			</executions>
+			<configuration>
+				<archive>
+					<manifest>
+						<addClasspath>true</addClasspath>
+						<mainClass>${mainClass}</mainClass>
+					</manifest>
+				</archive>
+				<descriptorRefs>
+					<descriptorRef>jar-with-dependencies</descriptorRef>
+				</descriptorRefs>
+			</configuration>
+		</plugin>
+
+		<!-- execution plugin -->
+		<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>exec-maven-plugin</artifactId>
+			<version>3.5.0</version>
+			<executions>
+				<execution>
+					<id>run</id>
+					<goals>
+						<goal>java</goal>
+					</goals>
+					<configuration>
+						<mainClass>main.Main</mainClass>
+					</configuration>
+				</execution>
+				<execution>
+					<id>test</id>
+					<goals>
+						<goal>java</goal>
+					</goals>
+					<configuration>
+						<mainClass>main.Main</mainClass>
+						<arguments>
+							<argument>test</argument>
+						</arguments>
+					</configuration>
+				</execution>
+
+				<!-- graal native build process -->
+				<execution>
+					<id>java-agent</id>
+					<goals>
+						<goal>exec</goal>
+					</goals>
+					<configuration>
+						<executable>java</executable>
+						<workingDirectory>${project.build.directory}</workingDirectory>
+						<arguments>
+							<argument>-classpath</argument>
+							<classpath/>
+							<argument>${mainClass}</argument>
+						</arguments>
+					</configuration>
+				</execution>
+				<execution>
+					<id>native</id>
+					<goals>
+						<goal>exec</goal>
+					</goals>
+					<configuration>
+						<executable>${project.build.directory}/${imageName}</executable>
+						<workingDirectory>${project.build.directory}</workingDirectory>
+					</configuration>
+				</execution>
+			</executions>
 		</plugin>
 	</plugins>
 </build>

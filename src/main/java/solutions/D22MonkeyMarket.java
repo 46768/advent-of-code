@@ -38,7 +38,7 @@ public class D22MonkeyMarket extends DayBase<List<Long>> {
 	}
 
 	public void part1() {
-		long secretSum = 0;;
+		long secretSum = 0;
 
 		for (long initSecrent : data) {
 			long secret = initSecrent;
@@ -66,7 +66,7 @@ public class D22MonkeyMarket extends DayBase<List<Long>> {
 	}
 
 	public void part2() {
-		HashMap<List<Byte>, List<Byte>> sequenceMap = new HashMap<>();
+		HashMap<List<Byte>, Integer> sequenceMap = new HashMap<>();
 
 		for (long intiSecret : data) {
 			HashSet<List<Byte>> addedChanges = new HashSet<>();
@@ -86,26 +86,18 @@ public class D22MonkeyMarket extends DayBase<List<Long>> {
 					byte priceAtChange = (byte)(priceQueue.get(4) & 0xF);
 
 					if (!addedChanges.contains(changes)) {
-						sequenceMap.putIfAbsent(changes, new ArrayList<>());
-						sequenceMap.get(changes).add(priceAtChange);
+						sequenceMap.put(changes, sequenceMap.getOrDefault(changes, 0)+priceAtChange);
 						addedChanges.add(changes);
 					}
 				}
 			}
 		}
 
-		long mostBananasGain = -1;
 
-		for (List<Byte> key : sequenceMap.keySet()) {
-			List<Byte> prices = sequenceMap.get(key);
-			long priceTotal = 0;
-			for (int i = 0; i < prices.size(); i++) {
-				//Logger.debug(prices.get(i));
-				priceTotal += prices.get(i);
-			}
-			mostBananasGain = Math.max(mostBananasGain, priceTotal);
-			//Logger.debug("-----");
-		}
+		ArrayList<Integer> bananaVal = new ArrayList<>();
+		bananaVal.addAll(sequenceMap.values());
+		Collections.sort(bananaVal);
+		long mostBananasGain = bananaVal.getLast();
 
 		Logger.log("Most bananas that can get: %d", mostBananasGain);
 	}
