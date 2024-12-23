@@ -9,9 +9,6 @@ import geomUtil.Coord;
 import grid.Grid;
 
 public class D20RaceCondition extends DayBase<HashMap<Coord, Long>> {
-	private long trackLenght;
-	private Grid<Character> debugMap;
-
 	public D20RaceCondition(InputData dat) {
 		super(dat);
 	}
@@ -20,12 +17,10 @@ public class D20RaceCondition extends DayBase<HashMap<Coord, Long>> {
 		// Track length scan
 		Coord startpos = null;
 		Grid<Character> map = new Grid<Character>(dat.size(), dat.get(0).length(), '#', '!');
-		trackLenght = 0;
 		for (int x = 0; x < dat.size(); x++) {
 			for (int y = 0; y < dat.get(0).length(); y++) {
 				char charAtPos = dat.get(x).charAt(y);
 				map.setVal(x, y, charAtPos);
-				if (charAtPos == '.' || charAtPos == 'E') trackLenght++;
 				if (charAtPos == 'S') startpos = new Coord(x, y);
 			}
 		}
@@ -56,8 +51,6 @@ public class D20RaceCondition extends DayBase<HashMap<Coord, Long>> {
 				}
 			}
 		}
-
-		debugMap = map;
 		return trackData;
 	}
 
@@ -65,20 +58,16 @@ public class D20RaceCondition extends DayBase<HashMap<Coord, Long>> {
 		return data.getOrDefault(current.add(offset), Long.MAX_VALUE);
 	}
 
-	private long getValidCheatWithOffsetArray(Coord[] offsetArray) {
-		HashMap<Coord, ArrayList<Coord>> cheatRecord = new HashMap<>();
+	private long getValidCheatWithOffsetArray(ArrayList<Coord> offsetArray) {
 		long validCheatCount = 0;
 		for (Coord key : data.keySet()) {
-			long keyDist = data.get(key);
 			for (Coord offset : offsetArray) {
-				Coord cheatStart = offset.divide(new Coord(2, 2));
 				long offsetDist = getTrackDistWithOffset(key, offset);
-				long isWall = getTrackDistWithOffset(key, cheatStart);
-				long cheatDist = Math.abs(offset.x()+offset.y());
-				if (offsetDist != Long.MAX_VALUE && isWall == Long.MAX_VALUE) {
+				if (offsetDist != Long.MAX_VALUE) {
+					long keyDist = data.get(key);
+					long cheatDist = Math.abs(offset.x())+Math.abs(offset.y());
 					long timeSaved = offsetDist-(keyDist+cheatDist);
-					cheatRecord.putIfAbsent(key, new ArrayList<>());
-					cheatRecord.get(key).add(offset);
+
 					// change 100 to change threshold
 					if (timeSaved >= 100) validCheatCount++;
 				}
@@ -87,20 +76,37 @@ public class D20RaceCondition extends DayBase<HashMap<Coord, Long>> {
 		return validCheatCount;
 	}
 
+	private ArrayList<Coord> generateOffsetArray(int dist) {
+		ArrayList<Coord> offsets = new ArrayList<>();
+
+		for (int x = -dist; x <= dist; x++) {
+			int yOffset = dist-Math.abs(x);
+			for (int y = 0; y < ((dist-Math.abs(x))*2)+1; y++) {
+				offsets.add(new Coord(x, y-yOffset));
+			}
+		}
+
+		// Removes immediate neighbor since its most likely a wall or
+		// does not help with time
+		for (int x : new int[]{-1, 0, 1}) {
+			for (int y : new int[]{-1, 0, 1}) {
+				offsets.remove(new Coord(x, y));
+			}
+		}
+
+		return offsets;
+	}
+
 	public void part1() {
 		// Iterate over all track position and get cheat time save
-		final Coord[] offsetArray = {
-			new Coord(-2, 0),
-			new Coord(0, 2),
-			new Coord(2, 0),
-			new Coord(0, -2),
-		};
-
+		final ArrayList<Coord> offsetArray = generateOffsetArray(2);
 		long validCheatCount = getValidCheatWithOffsetArray(offsetArray);
 		Logger.log("Cheats that will save at least 100 picoseconds: %d", validCheatCount);
 	}
 
 	public void part2() {
-
+		final ArrayList<Coord> offsetArray = generateOffsetArray(20);
+		long validCheatCount = getValidCheatWithOffsetArray(offsetArray);
+		Logger.log("Cheats that will save at least 100 picoseconds (20 picoseconds cheat): %d", validCheatCount);
 	}
 }
