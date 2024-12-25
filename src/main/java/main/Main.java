@@ -52,5 +52,6 @@ public class Main {
 		new D22MonkeyMarket(inputManager.getDay(22)).runDay();
 		new D23LANParty(inputManager.getDay(23)).runDay();
 		new D24CrossedWires(inputManager.getDay(24)).runDay();
+		new D25CodeChronicle(inputManager.getDay(25)).runDay();
 	}
 }

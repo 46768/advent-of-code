@@ -51,6 +51,10 @@ public class D24CrossedWires extends DayBase<ArrayList<String>> {
 		return returnArray;
 	}
 
+	protected String getCircuitType(String circuit) {
+		return circuit.substring(4, 7).trim();
+	}
+
 	protected ArrayList<String> getCircuitInputs(String circuit) {
 		String[] firstSplit = circuit.split("( AND )|( OR )|( XOR )");
 		String[] secondSplit = firstSplit[1].split(" -> ");
@@ -61,13 +65,13 @@ public class D24CrossedWires extends DayBase<ArrayList<String>> {
 		ArrayList<String> circuitPins = new ArrayList<>(getCircuitInputs(circuit));
 		boolean in1Val = wiringMap.get(circuitPins.get(0));
 		boolean in2Val = wiringMap.get(circuitPins.get(1));
-		String operator = circuit.substring(4, 7);
+		String operator = getCircuitType(circuit);
 
 		if (operator.equals("AND")) {
 			wiringMap.put(circuitPins.get(2), in1Val && in2Val);
 			return in1Val && in2Val;
 		}
-		if (operator.equals("OR ")) {
+		if (operator.equals("OR")) {
 			wiringMap.put(circuitPins.get(2), in1Val || in2Val);
 			return in1Val || in2Val;
 		}
@@ -119,38 +123,33 @@ public class D24CrossedWires extends DayBase<ArrayList<String>> {
 		return xBits;
 	}
 
-	protected boolean[] binaryHalfAdd(boolean x, boolean y) {
-		return new boolean[]{
-			x != y,
-			x && y
-		};
-	}
-
-	protected boolean[] binaryAdd(boolean x, boolean y, boolean c) {
-		return new boolean[]{
-			(x!=y)!=c,
-			((x!=y)&&c)||(x&&y)
-		};
-	}
-
 	public void part2() {
-		ArrayList<Boolean> xBits = getBits('x');
-		ArrayList<Boolean> yBits = getBits('y');
-		ArrayList<Boolean> resultStack = new ArrayList<>();
-		ArrayList<Boolean> carryStack = new ArrayList<>();
+		ArrayList<String> circuits = parseCircuitData();
+		ArrayList<String> misroutedWires = new ArrayList<>();
 
-		ArrayList<String> carryOutWireStack = new ArrayList<>();
-		ArrayList<String> misroutedWiring = new ArrayList<>();
+		for (String circuit : circuits) {
+			ArrayList<String> io = getCircuitInputs(circuit);
+			String type = getCircuitType(circuit);
 
-		// Half adder of LSB
-		boolean[] lsbAddRes = binaryHalfAdd(xBits.get(0), yBits.get(0));
-		resultStack.add(lsbAddRes[0]);
-		carryStack.add(lsbAddRes[1]);
+			char fcIn = io.get(0).charAt(0);
+			char scIn = io.get(0).charAt(0);
+			char fcOut = io.get(2).charAt(0);
 
-		for (int i = 1; i < xBits.size(); i++) {
-			boolean[] bitAddRes = binaryAdd(xBits.get(i), xBits.get(i), carryStack.get(i-1));
-			resultStack.add(bitAddRes[0]);
-			carryStack.add(bitAddRes[1]);
+			// Find if all output XOR is not connected to output wiring
+			if (fcOut == 'z' && !type.equals("XOR") && !io.get(2).equals("z45")) {
+				misroutedWires.add(io.get(2));
+			}
+			// Find any non output wire is connected to output XOR
+			else if (fcOut != 'z' && type.equals("XOR")
+					&& (fcIn != 'x' && fcIn != 'y') && (scIn != 'x' && scIn != 'y')) {
+				misroutedWires.add(io.get(2));
+			}
+
+			if (misroutedWires.size() > 8) break;
 		}
+
+		Collections.sort(misroutedWires);
+
+		Logger.log("Misrouted wires: %s", String.join(",", misroutedWires));
 	}
 }
