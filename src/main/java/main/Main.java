@@ -51,5 +51,6 @@ public class Main {
 		//new D21KeypadConundrum(inputManager.getDay(21)).runDay();
 		new D22MonkeyMarket(inputManager.getDay(22)).runDay();
 		new D23LANParty(inputManager.getDay(23)).runDay();
+		new D24CrossedWires(inputManager.getDay(24)).runDay();
 	}
 }
