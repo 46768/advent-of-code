@@ -27,6 +27,7 @@ public class Logger {
 	private static final String WARN = "["+formatColor("WARNING", ANSI_YELLOW)+"] ";
 	private static final String ERROR = "["+formatColor("ERROR", ANSI_RED)+"] ";
 	private static final String DEBUG = "["+formatColor("DEBUG", ANSI_PURPLE)+"] ";
+	private static final String SUCCESS = "["+formatColor("SUCCESS", ANSI_GREEN)+"] ";
 
 	/**
 	 * Format the text to a ANSI color
@@ -112,6 +113,10 @@ public class Logger {
 	 * @param nano Time in nanoseconds
 	 * @return The time formatted to time unit that is most readable
 	 */
+	public static void success(Object... obj) {
+		logBase(SUCCESS, obj);
+	}
+
 	public static String formatTimeFromNanos(long nano) {
 		double time = nano;
 		int unitIdx = 0;

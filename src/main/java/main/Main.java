@@ -1,5 +1,6 @@
 package main;
 
+import java.time.*;
 import solutions.*;
 
 import logger.Logger;
@@ -28,6 +29,7 @@ public class Main {
 			Logger.log("Using test data");
 		}
 
+		Instant runStart = Instant.now();
 		new D1HistorianHysteria(inputManager.getDay(1)).runDay();
 		new D2RedNosedReports(inputManager.getDay(2)).runDay();
 		new D3MullItOver(inputManager.getDay(3)).runDay();
@@ -53,5 +55,8 @@ public class Main {
 		new D23LANParty(inputManager.getDay(23)).runDay();
 		new D24CrossedWires(inputManager.getDay(24)).runDay();
 		new D25CodeChronicle(inputManager.getDay(25)).runDay();
+		Instant runEnd = Instant.now();
+		Logger.print('\n');
+		Logger.success("Total runtime: %s", Logger.formatTimeFromNanos(Duration.between(runStart, runEnd).toNanos()));
 	}
 }
