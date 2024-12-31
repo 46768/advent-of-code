@@ -1,11 +1,12 @@
+# Compiled stuff
+target/
+
 # Java compiled
 *.class
-target/
 docs/
 
 # AOC Puzzle input
 data/
-*.txt
 
 # JDTLS
 .settings/
