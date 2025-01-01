@@ -1,6 +1,9 @@
 # Compiled stuff
 target/
 
+# Clang stuff
+.cache/
+
 # Java compiled
 *.class
 docs/
