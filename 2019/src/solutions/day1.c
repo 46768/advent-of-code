@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include "logger.h"
-#include "fileReader.h"
+#include "file_reader.h"
 
 int* parse_input_day_1(FileData data, int* data_size) {
 	int capacity = 1;
@@ -66,6 +66,7 @@ void part_2_day_1(int* inpt, int inpt_size) {
 }
 
 void run_day_1(FileData inpt_data) {
+	newline();
 	int data_size = 0;
 	int* inpt = parse_input_day_1(inpt_data, &data_size);
 	part_1_day_1(inpt, data_size);

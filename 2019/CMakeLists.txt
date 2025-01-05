@@ -20,9 +20,10 @@ target_compile_options(tutorial_compiler_flags INTERFACE
 	"$<${gcc_like_cxx}:$<BUILD_INTERFACE:-Wall;-Wextra>>"
 	"$<${msvc_cxx}:$<BUILD_INTERFACE:-W3>>")
 
-# Add the solutions library
-add_subdirectory("${PROJECT_SOURCE_DIR}/src/solutions")
-add_subdirectory("${PROJECT_SOURCE_DIR}/lib")
+# Add the libraries
+add_subdirectory("${PROJECT_SOURCE_DIR}/src/solutions") # Solutions
+add_subdirectory("${PROJECT_SOURCE_DIR}/src/intcode") # IntCode CPU
+add_subdirectory("${PROJECT_SOURCE_DIR}/lib") # Common utilities
 
 # Add main.c as executable
 set(ENTRY_POINT "${PROJECT_SOURCE_DIR}/src/main.c")
@@ -30,3 +31,4 @@ add_executable(AOC2019 "${ENTRY_POINT}")
 
 # Link solutions to main
 target_link_libraries(AOC2019 PRIVATE Solutions)
+target_link_libraries(AOC2019 PRIVATE IntCode)

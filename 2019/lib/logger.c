@@ -9,6 +9,7 @@ const char* level_header[] = {
 	"WARN", // WARN
 	"ERROR", // ERROR
 	"DEBUG", // DEBUG
+	"FATAL", // FATAL
 };
 
 const char* ansi_level_coding[] = {
@@ -16,6 +17,7 @@ const char* ansi_level_coding[] = {
 	"\x1b[33m", // WARN
 	"\x1b[31m", // ERROR
 	"\x1b[35m", // DEBUG
+	"\x1b[30;41m", // FATAL
 };
 
 void _log(
@@ -28,9 +30,9 @@ void _log(
 		) {
 
 	// Log out the header
-	fprintf(stderr, "[%s%s\x1b[0m] %s: %d ",
+	fprintf(stderr, "[%s%s\x1b[0m] %s:%s:%d ",
 			ansi_level_coding[level], level_header[level],
-			basename((char*)file), line);
+			basename((char*)file), func, line);
 
 	// Log out the information
 	va_list args;
@@ -38,5 +40,9 @@ void _log(
 	vfprintf(stderr, format, args);
 	va_end(args);
 
+	fprintf(stderr, "\n");
+}
+
+void inline newline() {
 	fprintf(stderr, "\n");
 }

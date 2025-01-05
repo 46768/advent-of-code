@@ -1,8 +1,8 @@
-#include "inputManager.h"
+#include "input_manager.h"
 
 #include <stdio.h>
 
-#include "fileReader.h"
+#include "file_reader.h"
 
 FileData main_fetcher(int day) {
 	char path_buf[24];

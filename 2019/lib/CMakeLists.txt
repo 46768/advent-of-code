@@ -1,8 +1,10 @@
 # Define common libraries
 add_library(ComLib STATIC
-	fileReader.c
-	inputManager.c
+	file_reader.c
+	input_manager.c
 	logger.c
+	allocator.c
+	file_util.c
 )
 
 target_include_directories(ComLib PUBLIC

@@ -1,7 +1,7 @@
 #ifndef COM_INPUT_MANAGER_H
 #define COM_INPUT_MANAGER_H
 
-#include "fileReader.h"
+#include "file_reader.h"
 
 typedef FileData (*data_fetcher)(int);
 typedef struct {
