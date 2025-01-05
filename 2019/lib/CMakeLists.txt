@@ -5,6 +5,7 @@ add_library(ComLib STATIC
 	logger.c
 	allocator.c
 	file_util.c
+	hashmap.c
 )
 
 target_include_directories(ComLib PUBLIC

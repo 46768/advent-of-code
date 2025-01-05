@@ -1,9 +1,9 @@
 #ifndef INTCODE_PARSER
 #define INTCODE_PARSER
 
-#include <stdlib.h>
+#include "file_reader.h"
 
 // (intcode_string) -> [program_size, ...program_data] if success, NULL if failed
-int* parse_intcode_string(char*, size_t);
+int* parse_intcode_file(FileData);
 
 #endif

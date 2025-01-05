@@ -17,5 +17,7 @@ int main(int argc, char** argv) {
 	run_day_1(manager.fetcher(1));
 	run_day_2(manager.fetcher(2));
 	run_day_3(manager.fetcher(3));
+	run_day_4(manager.fetcher(4));
+	run_day_5(manager.fetcher(5));
 	return 0;
 }

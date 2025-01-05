@@ -11,13 +11,8 @@
 #include "file_reader.h"
 
 int* parse_input_day_2(FileData data) {
-	char* line_ptr = NULL;
-	size_t line_size;
-
 	if (data.file_pointer != NULL) {
-		if (getline(&line_ptr, &line_size, data.file_pointer) != -1) {
-			return parse_intcode_string(line_ptr, line_size);
-		}
+		return parse_intcode_file(data);
 	};
 	error("File is null");
 	return NULL;

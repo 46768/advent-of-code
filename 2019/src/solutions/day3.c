@@ -79,6 +79,7 @@ Vector* parse_input_day_3(FileData data) {
 			}
 		}
 
+		deallocate(section_buf);
 		return vectors;
 	};
 
@@ -192,5 +193,5 @@ void run_day_3(FileData inpt_data) {
 	Vector* inpt = parse_input_day_3(inpt_data);
 	part_1_day_3(inpt);
 	part_2_day_3(inpt);
-	free(inpt);
+	deallocate(inpt);
 }
