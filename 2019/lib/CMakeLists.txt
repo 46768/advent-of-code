@@ -6,6 +6,8 @@ add_library(ComLib STATIC
 	allocator.c
 	file_util.c
 	hashmap.c
+	hashset.c
+	hm_func.c
 )
 
 target_include_directories(ComLib PUBLIC

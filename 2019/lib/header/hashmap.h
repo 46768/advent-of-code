@@ -3,14 +3,14 @@
 
 #include <stdlib.h>
 
-typedef struct Node {
+typedef struct Node_HM {
 	void* key;
 	void* value;
-	struct Node* next;
-} Node;
+	struct Node_HM* next;
+} Node_HM;
 
 typedef struct {
-	Node** buckets;
+	Node_HM** buckets;
 	int size;
 	size_t k_size;
 	size_t v_size;
@@ -27,7 +27,8 @@ HashMap* hm_new(
 );
 
 void hm_insert(HashMap*, const void*, const void*);
-void hm_get(HashMap*, const void*);
+void* hm_get(HashMap*, const void*);
+int hm_k_exists(HashMap*, const void*);
 void hm_free(HashMap*);
 
 #endif
