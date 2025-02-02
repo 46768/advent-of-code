@@ -5,6 +5,7 @@ add_library(Solutions STATIC
 	day3.c
 	day4.c
 	day5.c
+	day6.c
 )
 
 target_include_directories(Solutions PUBLIC

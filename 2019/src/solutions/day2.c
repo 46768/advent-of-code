@@ -28,7 +28,7 @@ void part_1_day_2(int* inpt) {
 
 	run_program(&program);
 
-	log("position 0: %d", get_index_in_program(&program, 0));
+	info("position 0: %d", get_index_in_program(&program, 0));
 	free_program(&program);
 }
 
@@ -48,7 +48,7 @@ void part_2_day_2(int* inpt) {
 			
 			// 19690720 is the problem's magic number
 			if (get_index_in_program(&program, 0) == 19690720) {
-				log("100*noun + verb: %d", (100*noun)+verb);
+				info("100*noun + verb: %d", (100*noun)+verb);
 				free_program(&program);
 				return;
 			}

@@ -16,7 +16,7 @@
 void _log(int, const char*, int, const char*, const char*, ...);
 void newline();
 
-#define log(format, ...) _log(0, __FILE__, __LINE__, __func__, format, ##__VA_ARGS__)
+#define info(format, ...) _log(0, __FILE__, __LINE__, __func__, format, ##__VA_ARGS__)
 #define warn(format, ...) _log(1, __FILE__, __LINE__, __func__, format, ##__VA_ARGS__)
 #define error(format, ...) _log(2, __FILE__, __LINE__, __func__, format, ##__VA_ARGS__)
 #define fatal(format, ...) _log(4, __FILE__, __LINE__, __func__, format, ##__VA_ARGS__)
@@ -28,13 +28,13 @@ void newline();
 #endif
 
 #ifdef VERBOSE_MODE
-#	define log_v(format, ...) log(format, ##__VA_ARGS__)
+#	define info_v(format, ...) log(format, ##__VA_ARGS__)
 #	define warn_v(format, ...) warn(format, ##__VA_ARGS__)
 #	define error_v(format, ...) error(format, ##__VA_ARGS__)
 #	define debug_v(format, ...) debug(format, ##__VA_ARGS__)
 #	define fatal_v(format, ...) fatal(format, ##__VA_ARGS__)
 #else
-#	define log_v(format, ...)
+#	define info_v(format, ...)
 #	define warn_v(format, ...)
 #	define error_v(format, ...)
 #	define debug_v(format, ...)

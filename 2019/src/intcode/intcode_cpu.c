@@ -1,7 +1,5 @@
 #include "header/intcode_cpu.h"
 
-#include <stdio.h>
-
 #include "logger.h"
 
 typedef Program Program;

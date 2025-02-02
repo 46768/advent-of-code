@@ -49,7 +49,7 @@ void part_1_day_1(int* inpt, int inpt_size) {
 	for (int i = 0; i < inpt_size; i++) {
 		fuel_requirement += (inpt[i]/3)-2;
 	}
-	log("Fuel required: %d", fuel_requirement);
+	info("Fuel required: %d", fuel_requirement);
 }
 
 void part_2_day_1(int* inpt, int inpt_size) {
@@ -62,7 +62,7 @@ void part_2_day_1(int* inpt, int inpt_size) {
 			if (fuel_required < 0) fuel_required = 0;
 		}
 	}
-	log("Recursive Fuel required: %d", fuel_requirement);
+	info("Recursive Fuel required: %d", fuel_requirement);
 }
 
 void run_day_1(FileData inpt_data) {

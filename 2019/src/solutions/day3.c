@@ -134,7 +134,7 @@ void part_1_day_3(Vector* inpt) {
 		}
 	}
 
-	log("Distance of closest interesection point: %d", closest_distance);
+	info("Distance of closest interesection point: %d", closest_distance);
 }
 
 int get_vector_step(Vector v) {
@@ -185,7 +185,7 @@ void part_2_day_3(Vector* inpt) {
 		}
 		w1_steps += get_vector_step(wire_1);
 	}
-	log("Smallest step took to get to an intersection: %d", smallest_steps);
+	info("Smallest step took to get to an intersection: %d", smallest_steps);
 }
 
 void run_day_3(FileData inpt_data) {

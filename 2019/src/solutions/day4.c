@@ -42,7 +42,7 @@ void part_1_day_4(int bound[2]) {
 		valid_passwd += is_valid_passwd(i);
 	}
 
-	log("Valid password count: %d", valid_passwd);
+	info("Valid password count: %d", valid_passwd);
 }
 
 int is_valid_passwd_extended(int passwd) {
@@ -68,6 +68,7 @@ int is_valid_passwd_extended(int passwd) {
 		prev_lsd = cur_lsd;
 		passwd /= 10;
 	}
+	if (group_size == 2) double_digits = 1;
 	return double_digits;
 }
 
@@ -77,7 +78,7 @@ void part_2_day_4(int bound[2]) {
 		valid_passwd += is_valid_passwd_extended(i);
 	}
 
-	log("Valid password count with extended rules: %d", valid_passwd);
+	info("Valid password count with extended rules: %d", valid_passwd);
 }
 
 void run_day_4(FileData inpt) {

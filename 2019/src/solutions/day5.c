@@ -23,7 +23,7 @@ void part_1_day_5(int* program_data) {
 	run_program(&program);
 
 	flush_stdout(&program);
-	log("vmstdout flushed");
+	info("vmstdout flushed");
 }
 void part_2_day_5(int* program_data) {
 	Program program;
@@ -35,7 +35,7 @@ void part_2_day_5(int* program_data) {
 	newline();
 
 	flush_stdout(&program);
-	log("vmstdout flushed");
+	info("vmstdout flushed");
 }
 
 void run_day_5(FileData inpt) {

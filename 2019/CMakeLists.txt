@@ -32,3 +32,4 @@ add_executable(AOC2019 "${ENTRY_POINT}")
 # Link solutions to main
 target_link_libraries(AOC2019 PRIVATE Solutions)
 target_link_libraries(AOC2019 PRIVATE IntCode)
+target_link_libraries(AOC2019 PRIVATE ComLib)

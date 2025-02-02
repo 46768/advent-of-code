@@ -3,8 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "logger.h"
 #include "allocator.h"
 #include "booltype.h"
+
+#include "hashset.h"
 
 /*
 typedef struct Node_HM {
@@ -27,8 +30,8 @@ HashMap* hm_new(
 		int size,
 		size_t k_size,
 		size_t v_size,
-		unsigned int (*hash_fn)(const void* k),
-		int (*cmp_fn)(const void* a, const void* b)
+		unsigned int (*hash_fn)(const void*),
+		int (*cmp_fn)(const void*, const void*)
 ) {
 	HashMap* hm = allocate(sizeof(HashMap));
 	hm->buckets = calloc(size, sizeof(Node_HM*));
@@ -53,6 +56,7 @@ void hm_insert(HashMap* hm, const void* k, const void* v) {
 		node = node->next;
 	}
 
+
 	node = allocate(sizeof(Node_HM));
 	node->key = allocate(hm->k_size);
 	node->value = allocate(hm->v_size);
@@ -60,18 +64,29 @@ void hm_insert(HashMap* hm, const void* k, const void* v) {
 	memcpy(node->value, v, hm->v_size);
 	node->next = hm->buckets[hash_idx];
 	hm->buckets[hash_idx] = node;
+	debug("Checking val for null");
+	debug("is (arg)val NULL: %d", v == NULL ? 1 : 0);
+	debug("is val NULL: %b", node->value == NULL);
+	debug("%d", (*(HashSet**)(node->value))->size);
 }
 
 void* hm_get(HashMap* hm, const void* k) {
+	debug("hm get");
 	unsigned int hash_idx = hm->hash_func(k) % hm->size;
+	debug("got hash");
 	
 	Node_HM* node = hm->buckets[hash_idx];
+	debug("got node");
 	while (node) {
 		if (hm->key_cmp(node->key, k) == 0) {
+			debug("node found");
 			return node->value;
 		}
+		debug("checked node");
 		node = node->next;
+		debug("got node");
 	}
+	debug("node not found");
 
 	return NULL;
 }
